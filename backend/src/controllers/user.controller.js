@@ -6,8 +6,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
-
-
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -45,12 +43,14 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const avatarPath = req.files?.avatar[0].path;
+  console.log("avatar path", avatarPath)
 
-  if (avatarPath) {
-    const avatar = await uploadOnCloudinary(avatarPath);
-    if (!avatar) {
-      throw new ApiError(400, "avatar file didn't get uploaded");
-    }
+  if (!avatarPath) {
+    throw new ApiError(400, "avatar file is required");
+  }
+  const avatar = await uploadOnCloudinary(avatarPath);
+  if (!avatar) {
+    throw new ApiError(400, "avatar file didn't get uploaded");
   }
 
   const newUser = await User.create({
@@ -214,70 +214,66 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
-const getCurrentUser = asyncHandler(async(req, res) => {
+const getCurrentUser = asyncHandler(async (req, res) => {
   return res
-  .status(200)
-  .json(new ApiResponse(
-    200, 
-    req.user, 
-    "Current user fetched successfully"))
-})
+    .status(200)
+    .json(new ApiResponse(200, req.user, "Current user fetched successfully"));
+});
 
-const updateAccountDetails = asyncHandler(async(req, res) => {
-  const {fullName, username, email} = req.body
-  
+const updateAccountDetails = asyncHandler(async (req, res) => {
+  const { fullName, username, email } = req.body;
+
   const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
         fullName: fullName,
         email: email,
-        username: username
-      }
+        username: username,
+      },
     },
     {
-      new: true
+      new: true,
     }
-  ).select("-password")
+  ).select("-password");
 
   return res
-  .status(200)
-  .json(new ApiResponse(200, user, "account details updated successfully."))
-})
+    .status(200)
+    .json(new ApiResponse(200, user, "account details updated successfully."));
+});
 
-const updateUserAvatar = asyncHandler(async(req, res) => {
-  const file = req.file?.path
+const updateUserAvatar = asyncHandler(async (req, res) => {
+  const file = req.file?.path;
 
-  if(!file) {
-    throw new ApiError(400, "avatar file is missing")
+  if (!file) {
+    throw new ApiError(400, "avatar file is missing");
   }
 
-  const avatar = await uploadOnCloudinary(file)
+  const avatar = await uploadOnCloudinary(file);
 
-  if(!avatar) {
-    throw new ApiError(400, "error while uploading to cloudinary")
+  if (!avatar) {
+    throw new ApiError(400, "error while uploading to cloudinary");
   }
 
   const user = User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
-        avatar: avatar.url
-      }
+        avatar: avatar.url,
+      },
     },
-    {new: true}
-  )
+    { new: true }
+  );
 
   return res
-  .status(200)
-  .json(new ApiResponse(200, user, "avatar file updated successfully"))
+    .status(200)
+    .json(new ApiResponse(200, user, "avatar file updated successfully"));
+});
 
-})
+const getUserProfile = asyncHandler(async (req, res) => {
+  const { username } = req.body;
 
-const getUserProfile = asyncHandler(async(req, res) => {
-  const {username} = req.body;
-
-  if(!username.trim()){
+  if (!username.trim()) {
     throw new ApiError(400, "username is missing");
   }
   console.log(username);
@@ -285,34 +281,34 @@ const getUserProfile = asyncHandler(async(req, res) => {
   const profile = await User.aggregate([
     {
       $match: {
-        username: username?.toLowerCase()
-      }
+        username: username?.toLowerCase(),
+      },
     },
     {
       $lookup: {
         from: "follow",
         localField: "_id",
         foreignField: "followers",
-        as: "followers"
-      }
+        as: "followers",
+      },
     },
     {
       $lookup: {
         from: "follow",
         localField: "_id",
         foreignField: "following",
-        as: "following"
-      }
+        as: "following",
+      },
     },
     {
       $addFields: {
         followersCount: {
-          $size: "$followers"
+          $size: "$followers",
         },
         followingCount: {
-          $size: "following"
-        }
-      }
+          $size: "following",
+        },
+      },
     },
     {
       $project: {
@@ -321,26 +317,26 @@ const getUserProfile = asyncHandler(async(req, res) => {
         followersCount: 1,
         followingCount: 1,
         avatar: 1,
-        email:1
-      }
-    }
-  ])
+        email: 1,
+      },
+    },
+  ]);
 
   console.log("user profile: ", profile);
 
-  if(!profile?.length) {
-    throw new ApiError(404, "user profile doesn't exist")
+  if (!profile?.length) {
+    throw new ApiError(404, "user profile doesn't exist");
   }
 
   return res
-  .status(200)
-  .json(new ApiResponse(200, profile[0], "user profile fetched successfully"))
+    .status(200)
+    .json(
+      new ApiResponse(200, profile[0], "user profile fetched successfully")
+    );
+});
 
-})
-
-
-export { 
-  registerUser, 
+export {
+  registerUser,
   loginUser,
   changeCurrentPassword,
   refreshAccessToken,
@@ -349,6 +345,5 @@ export {
   logoutUser,
   updateAccountDetails,
   updateUserAvatar,
-  getUserProfile
-
+  getUserProfile,
 };

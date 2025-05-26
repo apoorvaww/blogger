@@ -35,3 +35,5 @@ router.route("/update-account-details").post(verifyJWT, updateAccountDetails)
 router.route("/update-user-avatar").patch(verifyJWT,
 upload.single("avatar"), updateUserAvatar)
 router.route("/refresh-token").post(verifyJWT, refreshAccessToken)
+
+export default router
