@@ -42,10 +42,9 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "user with email or username already exists");
   }
 
-  const avatarPath = req.files?.avatar[0].path;
-  console.log("avatar path", avatarPath)
+  const avatarPath = req.files?.avatar?.[0]?.path;
 
-  if (!avatarPath) {
+  if (!avatarPath || avatarPath=="") {
     throw new ApiError(400, "avatar file is required");
   }
   const avatar = await uploadOnCloudinary(avatarPath);
@@ -75,14 +74,14 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!(username || email)) {
-    throw new ApiError(400, "username or email is required");
+  if (!email) {
+    throw new ApiError(400, "email is required");
   }
 
   const user = await User.findOne({
-    $or: [{ email }, { username }],
+    email
   });
 
   if (!user) {
@@ -95,11 +94,11 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new ApiError(401, "given password in incorrect");
   }
 
-  const [accessToken, refreshToken] = await generateAccessAndRefreshTokens(
+  const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(
     user._id
   );
 
-  const loggedInUser = User.findById(user._id).select(
+  const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
 

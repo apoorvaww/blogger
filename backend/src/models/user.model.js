@@ -33,8 +33,8 @@ const userSchema = new Schema({
   },
   avatar: {
     type: String,
-    default:
-      "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.shutterstock.com%2Fsearch%2Fanonymous-avatar&psig=AOvVaw2jLhMz1lr-1kKuAlmI8_Lc&ust=1747396388409000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCOj_7vW0pY0DFQAAAAAdAAAAABAK",
+    required: true
+
   },
   isPublic: {
     type: Boolean,
