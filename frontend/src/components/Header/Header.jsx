@@ -50,12 +50,14 @@ const Header = () => {
 
           {/* Navigation */}
           <ul className="flex items-center gap-6">
+            {/* dark and light theme */}
+            <p>dark theme</p>
             {navItems.map((item) =>
               item.active ? (
                 <li key={item.name}>
                   <button
                     onClick={() => navigate(item.slug)}
-                    className="text-gray-700 hover:text-blue-600 transition-colors duration-200 font-medium"
+                    className="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-full cursor-pointer transition-colors duration-200 font-medium"
                   >
                     {item.name}
                   </button>

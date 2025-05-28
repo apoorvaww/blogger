@@ -55,10 +55,10 @@ const SignupComponent = () => {
   };
 
   return (
-  <div className="flex items-center justify-center  px-4">
-    <div className="w-full max-w-lg bg-white shadow-md rounded-lg p-8 border border-gray-200">
+  <div className="flex items-center justify-center  px-4 min-h-screen bg-gray-100">
+    <div className="w-full max-w-lg bg-white rounded-lg p-8 border border-gray-200 shadow-lg shadow-black">
       {/* Logo */}
-      <div className="flex justify-center mb-4">
+      <div className="flex justify-center mb-2">
         <span className="text-3xl font-bold text-blue-600">Blogger</span>
       </div>
 

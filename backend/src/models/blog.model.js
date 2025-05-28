@@ -36,6 +36,14 @@ const blogSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    commentsCount: {
+      type: Number,
+      default: 0,
+    }
   },
   { timestamps: true }
 );

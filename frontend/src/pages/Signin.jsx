@@ -3,7 +3,7 @@ import SigninComponent from "../components/SigninComponent";
 
 const Signin = () => {
     return(
-        <div>
+        <div >
             <SigninComponent/>
         </div>
     )

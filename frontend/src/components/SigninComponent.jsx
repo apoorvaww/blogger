@@ -51,8 +51,8 @@ const SigninComponent = () => {
   };
 
   return (
-    <div className=" flex items-center justify-center px-5 m-10">
-      <div className="w-full max-w-lg bg-white shadow-md rounded-lg p-8 border border-gray-200">
+    <div className=" flex items-center justify-center px-5 min-h-screen bg-gray-100">
+      <div className="w-full max-w-lg bg-white rounded-lg p-8 border border-gray-200 shadow-black shadow-lg">
         {/* Logo */}
         <div className="flex justify-center mb-4">
           <span className="text-3xl font-bold text-blue-600">Blogger</span>

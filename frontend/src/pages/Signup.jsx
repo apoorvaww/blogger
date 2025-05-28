@@ -3,7 +3,7 @@ import SignupComponent from "../components/SignupComponent";
 
 const Signup = () => {
     return(
-        <div>
+        <div className="min-h-screen">
             <SignupComponent/>
         </div>
     )

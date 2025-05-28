@@ -38,6 +38,7 @@ const userSchema = new Schema({
   },
   isPublic: {
     type: Boolean,
+    default: true,
   },
 },
 {
