@@ -125,19 +125,18 @@ const getAllBlogs = asyncHandler(async (req, res) => {
 });
 
 const getSingleBlog = asyncHandler(async (req, res) => {
-  const {blogId} = req.params;
-  if(!blogId){
+  const { blogId } = req.params;
+  if (!blogId) {
     throw new ApiError(400, "Blog id is required");
   }
   const blog = await Blog.findById(blogId);
-  if(!blog) {
+  if (!blog) {
     throw new ApiError(400, "blog not found");
   }
 
   return res
-  .status(200)
-  .json(new ApiResponse(200, blog, "blog sent successfully"))
-
+    .status(200)
+    .json(new ApiResponse(200, blog, "blog sent successfully"));
 });
 
 const getPublicBlogs = asyncHandler(async (req, res) => {
@@ -154,20 +153,32 @@ const getPublicBlogs = asyncHandler(async (req, res) => {
     })
     .lean();
 
-  if(!blogs) {
-    throw new ApiError(500, "No blogs to show yet")
+  if (!blogs) {
+    throw new ApiError(500, "No blogs to show yet");
   }
 
-  const publicBlogs = blogs.filter(blog => blog.owner !== null);
+  const publicBlogs = blogs.filter((blog) => blog.owner !== null);
 
-  if(!publicBlogs){
-    throw new ApiError(404, "Couldn't fetch public blogs")
+  if (!publicBlogs) {
+    throw new ApiError(404, "Couldn't fetch public blogs");
   }
 
   return res
-  .status(200)
-  .json(new ApiResponse(200, {total: publicBlogs.length, blogs: publicBlogs}, "Public blogs fetched successfully"))
-
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { total: publicBlogs.length, blogs: publicBlogs },
+        "Public blogs fetched successfully"
+      )
+    );
 });
 
-export { createBlog, updateBlog, deleteBlog, getAllBlogs, getSingleBlog, getPublicBlogs };
+export {
+  createBlog,
+  updateBlog,
+  deleteBlog,
+  getAllBlogs,
+  getSingleBlog,
+  getPublicBlogs,
+};

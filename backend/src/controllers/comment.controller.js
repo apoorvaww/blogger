@@ -86,20 +86,127 @@ const deleteComment = asyncHandler(async (req, res) => {
 
 const getCommentsOnBlog = asyncHandler(async (req, res) => {
   const { blogId } = req.params;
+  const { page = 1, limit = 10, keyword } = req.query;
+
   if (!blogId) {
     throw new ApiError(400, "Blog id is required");
   }
 
-  const comments = await Comment.find({ blog: blogId, isDeleted: false})
+  const skip = (page - 1) * limit;
+  let query = {blog: blogId, isDeleted: false};
+
+  if(keyword) {
+    query.content = {$regex: keyword, $options: "i"};
+  }
+
+  const totalComments = await Comment.countDocuments(query);
+
+  const comments = await Comment.find(query)
+    .populate("owner", "username avatar")
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(parseInt(limit));
+
+  if (comments.length === 0) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, comments, "No comments found"));
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        {
+        comments,
+        totalComments,
+        totalPages: Math.ceil(totalComments/limit),
+        currentPage: parseInt(page)
+        },
+        "Comments under blog post fetched successfully"
+      )
+    );
+});
+
+const addReplyToComment = asyncHandler(async(req, res) => {
+  const {parentCommentId} = req.params;
+  const {replyContent} = req.body;
+  if(!parentCommentId) {
+    throw new ApiError(400, "Parent comment id is required");
+  };
+  if(!content){
+    throw new ApiError(400, "content of comment is required");
+  }
+
+  const parentComment = await Comment.findById(parentCommentId);
+  if(!parentComment) {
+    throw new ApiError(404, "Parent Comment not found");
+  }
+
+  const reply = await Comment.create({
+    content: replyContent,
+    blog: parentComment.blog,
+    owner: req.user._id,
+    parentComment: parentComment._id
+  })
+
+  if(!reply) {
+    throw new ApiError(500, "Something went wrong. Reply couldn't be added.")
+  }
+
+  return res
+  .status(201)
+  .json(new ApiResponse(201, reply, "Reply added successfully"))
+
+
+})
+
+const getRepliesOnComment = asyncHandler(async(req, res) => {
+  const {parentCommentId} = req.params;
+  if(!parentCommentId) {
+    throw new ApiError(400, "Parent comment's id is required");
+  }
+
+  const replies = await Comment.find({parentComment: parentCommentId})
   .populate("owner", "username avatar")
   .sort({createdAt: -1});
-  if(!comments) {
-    throw new ApiError(404, "Couldn't get comments");
+
+  if(replies.length === 0) {
+    return res.status(200).json(new ApiResponse(200, replies, "No replies added yet."))
   }
 
   return res
   .status(200)
-  .json(new ApiResponse(200, comments, "Comments under blog post fetched successfully"))
+  .json(new ApiResponse(200, replies, "Replies fetched successfully"));
 });
 
-export { createComment, updateComment, deleteComment };
+const deleteReplyOnComment = asyncHandler(async(req, res) => {
+  const {replyId} = req.params;
+  if(!replyId) {
+    throw new ApiError(400, "Reply id is required")
+  }
+
+  const reply = await Comment.findById(replyId);
+  if(!reply) {
+    throw new ApiError(404, "Reply not found");
+  }
+
+  if(!reply.parentComment) {
+    throw new ApiError(400, "This comment is not reply");
+  }
+
+  if(reply.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not authorized to delete this reply");
+  }
+
+  reply.isDeleted = true;
+  await reply.save();
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, reply, "Reply deleted successfully"))
+
+})
+
+export { createComment, updateComment, deleteComment, getCommentsOnBlog, getRepliesOnComment, addReplyToComment, deleteReplyOnComment };

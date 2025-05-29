@@ -6,36 +6,49 @@ import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { login, logout } from "./store/authSlice.js";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-  const[loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
 
-  useEffect(()=>{
-    const checkUserSession = async() => {
-    try {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/get-current-user`,{
-        withCredentials: true
-      })
-      console.log("get current user: ", res.data);
-      if(res.data.data) {
-        dispatch(login(res.data.data));
+  useEffect(() => {
+    const checkUserSession = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/users/get-current-user`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("get current user: ", res.data);
+        if (res.data.data) {
+          dispatch(login(res.data.data));
+        } else {
+          dispatch(logout());
+        }
+      } catch (error) {
+        console.error("error occurred while fetching user's info", error);
+      } finally {
+        setLoading(false);
       }
-      else{
-        dispatch(logout());
-      }
-
-    } catch (error) {
-      console.error("error occurred while fetching user's info", error)
-    }finally{
-      setLoading(false);
-    }
-  };
-  checkUserSession();
-  })
+    };
+    checkUserSession();
+  }, []);
 
   return !loading ? (
     <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 text-gray-800">
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#0f766e", // Tailwind teal-700
+            color: "#fff",
+            fontWeight: "500",
+          },
+        }}
+      />
       <header className="shadow-md bg-white">
         <Header />
       </header>

@@ -15,18 +15,28 @@ const commentSchema = new Schema(
       ref: "User",
     },
     isEdited: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     isDeleted: {
-        type: Boolean,
-        default: false
-    }
+      type: Boolean,
+      default: false,
+    },
+    parentComment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+      default: null,
+    },
+    likedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   {
     timestamps: true,
   }
 );
 
-
-export const Comment = new mongoose.model("Comment", commentSchema)
+export const Comment = new mongoose.model("Comment", commentSchema);

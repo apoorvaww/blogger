@@ -1,30 +1,30 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Container  from "../Container/Container";
+import Container from "../Container/Container";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-slate-100 text-slate-800 border-t border-slate-200 mt-10">
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 py-12">
           {/* Branding */}
           <div>
-            <h2 className="text-2xl font-bold text-blue-400">Blogger</h2>
-            <p className="mt-2 text-gray-400">
+            <h2 className="text-2xl font-bold text-teal-600">Blogger</h2>
+            <p className="mt-2 text-slate-600 text-sm">
               Share your thoughts, stories, and ideas with the world.
             </p>
           </div>
 
-          {/* Navigation Links */}
+          {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-blue-300">
+            <h3 className="text-lg font-semibold mb-3 text-teal-500">
               Quick Links
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   to="/"
-                  className="text-gray-300 hover:text-white transition"
+                  className="text-slate-600 hover:text-teal-600 transition-colors"
                 >
                   Home
                 </Link>
@@ -32,7 +32,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/blog-posts"
-                  className="text-gray-300 hover:text-white transition"
+                  className="text-slate-600 hover:text-teal-600 transition-colors"
                 >
                   Blog Posts
                 </Link>
@@ -40,7 +40,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/add-post"
-                  className="text-gray-300 hover:text-white transition"
+                  className="text-slate-600 hover:text-teal-600 transition-colors"
                 >
                   Add Post
                 </Link>
@@ -48,7 +48,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/login"
-                  className="text-gray-300 hover:text-white transition"
+                  className="text-slate-600 hover:text-teal-600 transition-colors"
                 >
                   Login
                 </Link>
@@ -56,7 +56,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/signup"
-                  className="text-gray-300 hover:text-white transition"
+                  className="text-slate-600 hover:text-teal-600 transition-colors"
                 >
                   Signup
                 </Link>
@@ -64,20 +64,28 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Social Media */}
+          {/* Connect */}
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-blue-300">
+            <h3 className="text-lg font-semibold mb-3 text-teal-500">
               Connect
             </h3>
-            <div className="flex gap-4">
-              {/* Replace these with real icons or links */}
-              <a href="#" className="text-gray-400 hover:text-white transition">
+            <div className="flex flex-col gap-2 text-sm">
+              <a
+                href="#"
+                className="text-slate-600 hover:text-teal-600 transition-colors"
+              >
                 Facebook
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition">
+              <a
+                href="#"
+                className="text-slate-600 hover:text-teal-600 transition-colors"
+              >
                 Twitter
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition">
+              <a
+                href="#"
+                className="text-slate-600 hover:text-teal-600 transition-colors"
+              >
                 LinkedIn
               </a>
             </div>
@@ -85,7 +93,7 @@ const Footer = () => {
         </div>
 
         {/* Footer Bottom */}
-        <div className="border-t border-gray-700 pt-4 text-center text-sm text-gray-500">
+        <div className="border-t border-slate-200 pt-4 pb-6 text-center text-xs text-slate-500">
           © {new Date().getFullYear()} Blogger. All rights reserved.
         </div>
       </Container>
