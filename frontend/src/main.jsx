@@ -9,21 +9,18 @@ import store from "./store/store.js";
 import Signup from "./pages/Signup.jsx";
 import Signin from "./pages/Signin.jsx";
 import { Toaster } from "react-hot-toast";
+import Home from "./pages/Home.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    // children: [
-    //   {
-    //     path: "/login",
-    //     element: <Signin />,
-    //   },
-    //   {
-    //     path: "/sign-up",
-    //     element: <Signup />,
-    //   },
-    // ],
+    children: [
+      {
+        path: "/",
+        element: <Home/>
+      }
+    ]
   },
   {
     path: "/login",

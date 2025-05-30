@@ -55,7 +55,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/signup"
+                  to="/sign-up"
                   className="text-slate-600 hover:text-teal-600 transition-colors"
                 >
                   Signup
@@ -92,7 +92,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Footer Bottom */}
         <div className="border-t border-slate-200 pt-4 pb-6 text-center text-xs text-slate-500">
           © {new Date().getFullYear()} Blogger. All rights reserved.
         </div>

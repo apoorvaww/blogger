@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
-import cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser"
+import {errorHandler} from './middleware/error.middleware.js'
+
 
 const app = express();
 
@@ -24,5 +26,7 @@ import blogRouter from "./routes/blog.routes.js"
 //routes declaration:
 app.use("/api/users", userRouter);
 app.use("/api/blogs", blogRouter)
+
+app.use(errorHandler);
 
 export { app };

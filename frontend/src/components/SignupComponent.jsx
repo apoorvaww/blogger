@@ -10,8 +10,12 @@ import toast from "react-hot-toast";
 
 const SignupComponent = () => {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -49,17 +53,28 @@ const SignupComponent = () => {
       toast.success("Account created successfully");
       navigate("/login");
     } catch (error) {
-      const {response} = error;
-      if(response?.data?.errors) {
-        Object.entries(response.data.errors).forEach(([field, message])=> {
-          setError(field, {type: "server", message})
-          toast.error(`${field}: ${message}`);
-        })
-      } else if(response?.data?.message) {
-        toast.error(response.data.message)
-      }else{
-        toast.error("Something went wrong. Please try again!")
+      const { response } = error;
+      console.log(response);
+      let errorMessage = "Sign up failed.";
+      if (response.data.message) {
+        errorMessage =
+          response.data.message || "Please fill up the sign up form correctly";
+      } else if (response?.data?.message) {
+        const message = response.data.message.toLowerCase();
+        if (message.includes("password")) {
+          setError("password", {
+            type: "server",
+            message: response.data.message,
+          });
+          toast.error("incorrect password");
+        } else if (message.includes("user") || message.includes("email")) {
+          setError("email", { type: "server", message: response.data.message });
+          toast.error("User not found with this email.");
+        } else {
+          toast.error(response.data.message);
+        }
       }
+      toast.error(errorMessage)
       console.error("Sign up error");
     } finally {
       setLoading(false);
@@ -88,12 +103,12 @@ const SignupComponent = () => {
           </Link>
         </p>
 
-        {/* Error Message */}
-        {error && (
+        {/* Error Message
+        {errorMessage && (
           <div className="bg-red-50 text-red-600 text-sm text-center py-2 px-3 rounded mb-4 border border-red-200">
-            {error}
+            {errorMessage}
           </div>
-        )}
+        )} */}
 
         {/* Form */}
         <form onSubmit={handleSubmit(createAccount)} className="space-y-5">

@@ -4,37 +4,41 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
-const createBlog = asyncHandler(async (req, res) => {
-  const { title, content } = req.body;
-
-  if (!title) {
-    throw new ApiError(400, "title is required");
-  }
-  if (!content) {
-    throw new ApiError(400, "content is required");
-  }
-
-  const coverImagePath = req.files?.coverImage[0]?.path;
-  let coverImageUrl = null;
-
-  if (coverImagePath) {
-    const coverImage = await uploadOnCloudinary(coverImagePath);
-    if (!coverImage.url) {
-      throw new ApiError(500, "error while uploading cover image.");
+const createBlog = asyncHandler(async (req, res, next) => {
+  try {
+    const { title, content } = req.body;
+  
+    if (!title) {
+      throw new ApiError(400, "title is required");
     }
-    coverImageUrl = coverImage.url;
+    if (!content) {
+      throw new ApiError(400, "content is required");
+    }
+  
+    const coverImagePath = req.files?.coverImage[0]?.path;
+    let coverImageUrl = null;
+  
+    if (coverImagePath) {
+      const coverImage = await uploadOnCloudinary(coverImagePath);
+      if (!coverImage.url) {
+        throw new ApiError(500, "error while uploading cover image.");
+      }
+      coverImageUrl = coverImage.url;
+    }
+  
+    const blog = Blog.create({
+      title: title,
+      content,
+      coverImage: coverImageUrl,
+      owner: req.user?._id,
+    });
+  
+    return res
+      .status(201)
+      .json(new ApiResponse(201, blog, "blog post created successfully"));
+  } catch (error) {
+    next(error);
   }
-
-  const blog = Blog.create({
-    title: title,
-    content,
-    coverImage: coverImageUrl,
-    owner: req.user?._id,
-  });
-
-  return res
-    .status(201)
-    .json(new ApiResponse(201, blog, "blog post created successfully"));
 });
 
 const updateBlog = asyncHandler(async (req, res) => {
@@ -145,7 +149,7 @@ const getPublicBlogs = asyncHandler(async (req, res) => {
   })
     .populate({
       path: "owner",
-      select: "username email isPublic",
+      select: "username email isPublic avatar",
       match: { isPublic: true },
     })
     .sort({

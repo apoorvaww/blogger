@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { User } from "./user.model.js";
-import slugify from 'slugify';
+import slugify from "slugify";
 
 const blogSchema = new Schema(
   {
@@ -14,7 +13,7 @@ const blogSchema = new Schema(
     },
     slug: {
       type: String,
-      unique: true,
+      required: false,
     },
     views: {
       type: Number,
@@ -23,6 +22,7 @@ const blogSchema = new Schema(
     owner: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     tags: [
       {
@@ -43,16 +43,31 @@ const blogSchema = new Schema(
     commentsCount: {
       type: Number,
       default: 0,
-    }
+    },
   },
   { timestamps: true }
 );
 
-blogSchema.pre("save", function (next) {
-  if (!this.slug) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
+// Compound index to prevent duplicate slugs per user (optional)
+blogSchema.index({ owner: 1, slug: 1 }, { unique: true });
+
+// Slug generation logic
+blogSchema.pre("save", async function (next) {
+  if (!this.isModified("title")) return next();
+
+  let baseSlug = slugify(this.title, { lower: true, strict: true });
+  let slug = baseSlug;
+  let counter = 1;
+
+  // Check for existing slugs for the same owner
+  while (
+    await mongoose.models.Blog.findOne({ slug, owner: this.owner, _id: { $ne: this._id } })
+  ) {
+    slug = `${baseSlug}-${counter++}`;
   }
+
+  this.slug = slug;
   next();
 });
 
-export const Blog = new mongoose.model("Blog", blogSchema);
+export const Blog = mongoose.model("Blog", blogSchema);
