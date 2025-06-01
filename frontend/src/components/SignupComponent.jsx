@@ -48,7 +48,7 @@ const SignupComponent = () => {
       );
       console.log(res.data.data);
       if (res.data) {
-        dispatch(login(res.data.data));
+        dispatch(login({userData: res.data.data.user}));
       }
       toast.success("Account created successfully");
       navigate("/login");

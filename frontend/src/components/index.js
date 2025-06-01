@@ -7,6 +7,9 @@ import Input from "./Input.jsx";
 import SigninComponent from "./SigninComponent.jsx";
 import SignupComponent from "./SignupComponent.jsx";
 import PostCard from './PostCard.jsx'
+import RTE from './RTE.jsx'
+import AddPost from "./AddPost.jsx";
+import Select from './Select.jsx'
 
 export {
   Header,
@@ -17,5 +20,8 @@ export {
   Input,
   SigninComponent,
   SignupComponent,
-  PostCard
+  PostCard,
+  RTE,
+  AddPost,
+  Select
 };

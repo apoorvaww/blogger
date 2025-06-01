@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import LogoutBtn from "./LogoutBtn.jsx";
 import Container from "../Container/Container.jsx";
+import Button from "../Button.jsx";
 
 const Header = () => {
   const authStatus = useSelector((state) => state.auth.status);
@@ -56,12 +57,12 @@ const Header = () => {
             {navItems.map((item) =>
               item.active ? (
                 <li key={item.name}>
-                  <button
+                  <Button
                     onClick={() => navigate(item.slug)}
                     className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-full transition duration-200 font-medium shadow-sm"
                   >
                     {item.name}
-                  </button>
+                  </Button>
                 </li>
               ) : null
             )}

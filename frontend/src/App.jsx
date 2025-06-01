@@ -37,7 +37,7 @@ function App() {
   }, []);
 
   return !loading ? (
-    <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 text-gray-800">
+    <div className="min-h-screen flex flex-col justify-between bg-gray-100 font-poppins">
       <Toaster
         position="bottom-right"
         toastOptions={{

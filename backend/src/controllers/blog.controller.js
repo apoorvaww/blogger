@@ -26,7 +26,7 @@ const createBlog = asyncHandler(async (req, res, next) => {
       coverImageUrl = coverImage.url;
     }
   
-    const blog = Blog.create({
+    const blog = await Blog.create({
       title: title,
       content,
       coverImage: coverImageUrl,
@@ -35,7 +35,7 @@ const createBlog = asyncHandler(async (req, res, next) => {
   
     return res
       .status(201)
-      .json(new ApiResponse(201, blog, "blog post created successfully"));
+      .json(new ApiResponse(201, {blog: blog}, "blog post created successfully"));
   } catch (error) {
     next(error);
   }
@@ -116,8 +116,7 @@ const getAllBlogs = asyncHandler(async (req, res) => {
     owner: userId,
   })
     .sort({ createdAt: -1 })
-    .populate("owner", "username email")
-    .lean();
+    .populate("owner", "username email avatar")
 
   if (!blogs) {
     throw new ApiError(404, "No blogs found");
@@ -133,7 +132,8 @@ const getSingleBlog = asyncHandler(async (req, res) => {
   if (!blogId) {
     throw new ApiError(400, "Blog id is required");
   }
-  const blog = await Blog.findById(blogId);
+  const blog = await Blog.findById(blogId)
+  .populate("owner", "username email avatar")
   if (!blog) {
     throw new ApiError(400, "blog not found");
   }

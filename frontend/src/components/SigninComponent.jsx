@@ -35,7 +35,7 @@ const SigninComponent = () => {
       );
       if (res.data?.data) {
         console.log(res.data);
-        dispatch(authLogin(res.data.data.user));
+        dispatch(authLogin({userData: res.data.data.user}));
         toast.success("Login successful!");
         navigate("/");
       }

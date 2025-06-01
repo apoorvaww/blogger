@@ -10,6 +10,8 @@ import Signup from "./pages/Signup.jsx";
 import Signin from "./pages/Signin.jsx";
 import { Toaster } from "react-hot-toast";
 import Home from "./pages/Home.jsx";
+import AddPostt from "./pages/AddPost.jsx";
+import ViewBlog from "./pages/ViewBlog.jsx";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home/>
+      },
+      {
+        path: "/add-post",
+        element: <AddPostt/>
       }
     ]
   },
@@ -30,6 +36,10 @@ const router = createBrowserRouter([
     path: "/sign-up",
     element: <Signup />,
   },
+  {
+    path: "/post/:id",
+    element: <ViewBlog/>
+  }
 ]);
 
 createRoot(document.getElementById("root")).render(
