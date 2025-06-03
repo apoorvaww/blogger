@@ -10,7 +10,7 @@ import PostCard from './PostCard.jsx'
 import RTE from './RTE.jsx'
 import AddPost from "./AddPost.jsx";
 import Select from './Select.jsx'
-
+import UpdateAccountDetails from "./UpdateAccountDetails.jsx";
 export {
   Header,
   LogoutBtn,
@@ -23,5 +23,6 @@ export {
   PostCard,
   RTE,
   AddPost,
-  Select
+  Select,
+  UpdateAccountDetails
 };

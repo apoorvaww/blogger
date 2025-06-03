@@ -15,6 +15,8 @@ import AddPostt from "./pages/AddPost.jsx";
 import ViewBlog from "./pages/ViewBlog.jsx";
 import EditPost from "./pages/EditPost.jsx";
 import Post from "./components/Post.jsx";
+import Profile from "./pages/Profile.jsx";
+import UpdateDetails from "./pages/UpdateDetails.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
       {
         path: "/add-post",
         element: <AddPostt />,
+      },
+      {
+        path: "/profile/u/:userId",
+        element: <Profile />,
+      },
+      {
+        path: "/update-account-details",
+        element: <UpdateDetails />,
       },
     ],
   },

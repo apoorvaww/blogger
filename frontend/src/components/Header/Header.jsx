@@ -10,13 +10,15 @@ const Header = () => {
   const authStatus = useSelector((state) => state.auth.status);
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const authData = useSelector((state) => state.auth.userData);
+  
   const navItems = [
     { name: "Home", slug: "/", active: true },
     { name: "Login", slug: "/login", active: !authStatus },
     { name: "Signup", slug: "/sign-up", active: !authStatus },
     { name: "Blog Posts", slug: "/blog-posts", active: authStatus },
     { name: "Add Post", slug: "/add-post", active: authStatus },
+    {name: "Profile", slug: `/profile/u/${authData._id}`, active: authStatus},
   ];
 
   const toggleMenu = () => setMobileMenuOpen(!mobileMenuOpen);

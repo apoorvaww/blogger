@@ -21,7 +21,7 @@ function App() {
             withCredentials: true,
           }
         );
-        console.log("get current user: ", res.data);
+        // console.log("get current user: ", res.data);
         if (res.data.data) {
           dispatch(login(res.data.data));
         } else {
