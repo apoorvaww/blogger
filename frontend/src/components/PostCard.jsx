@@ -1,10 +1,13 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const fallbackImage =
   "https://media.istockphoto.com/id/1180410208/vector/landscape-image-gallery-with-the-photos-stack-up.jpg?s=612x612&w=0&k=20&c=G21-jgMQruADLPDBk7Sf1vVvCEtPiJD3Rf39AeB95yI=";
 
 const PostCard = ({ id, title, featureImage }) => {
+  // const loggedInUser = useSelector((state) => state.auth.userData);
+  // console.log(loggedInUser);
   return (
     <Link
       to={`/post/${id}`}

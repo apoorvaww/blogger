@@ -10,9 +10,9 @@ const AddPost = ({ post }) => {
   const { register, handleSubmit, watch, setValue, control, getValues } =
     useForm({
       defaultValues: {
-        title: post?.title || "",
+        title: post?.title || "Title",
         slug: post?.slug || "",
-        content: post?.content || "",
+        content: post?.content || "Content here..",
         status: post?.published ? "active" : "inactive",
       },
     });
@@ -105,12 +105,12 @@ const AddPost = ({ post }) => {
                 })
               }
             />
-            <RTE
+            {control && (<RTE
               label="Content"
               name="content"
               control={control}
-              defaultValue={getValues("content")}
-            />
+              // defaultValue={getValues("content")}
+            />)}
           </div>
 
           {/* Right column - sidebar */}

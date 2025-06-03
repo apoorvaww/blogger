@@ -7,17 +7,17 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const createBlog = asyncHandler(async (req, res, next) => {
   try {
     const { title, content } = req.body;
-  
+
     if (!title) {
       throw new ApiError(400, "title is required");
     }
     if (!content) {
       throw new ApiError(400, "content is required");
     }
-  
+
     const coverImagePath = req.files?.coverImage[0]?.path;
     let coverImageUrl = null;
-  
+
     if (coverImagePath) {
       const coverImage = await uploadOnCloudinary(coverImagePath);
       if (!coverImage.url) {
@@ -25,43 +25,49 @@ const createBlog = asyncHandler(async (req, res, next) => {
       }
       coverImageUrl = coverImage.url;
     }
-  
+
     const blog = await Blog.create({
       title: title,
       content,
       coverImage: coverImageUrl,
       owner: req.user?._id,
     });
-  
+
     return res
       .status(201)
-      .json(new ApiResponse(201, {blog: blog}, "blog post created successfully"));
+      .json(
+        new ApiResponse(201, { blog: blog }, "blog post created successfully")
+      );
   } catch (error) {
     next(error);
   }
 });
 
 const updateBlog = asyncHandler(async (req, res) => {
-  const { title, content } = req.body;
+  const {title, content} = req.body || {};
   const { blogId } = req.params;
 
-  if (!title) {
-    throw new ApiError(400, "title to update not found");
-  }
-  if (!content) {
-    throw new ApiError(400, "updated content not found");
-  }
+  // if (!title) {
+  //   throw new ApiError(400, "title to update not found");
+  // }
+  // if (!content) {
+  //   throw new ApiError(400, "updated content not found");
+  // }
 
   const blog = await Blog.findById(blogId);
   if (!blog) {
     throw new ApiError(400, "blog id not found");
   }
+  console.log(blog);
 
-  if (blog.owner.toString() !== req.user) {
+  if (blog.owner.toString() !== req.user._id.toString()) {
     throw new ApiError(409, "unauthenticated request to update blog.");
   }
 
-  const newCoverImagePath = req.files?.coverImage[0]?.path;
+  if(title && title!=blog.title) blog.title = title;
+  if(content && content != blog.content) blog.content = content;
+
+  const newCoverImagePath = req.files?.coverImage?.[0]?.path;
 
   if (newCoverImagePath) {
     const newCoverImage = await uploadOnCloudinary(newCoverImagePath);
@@ -72,14 +78,12 @@ const updateBlog = asyncHandler(async (req, res) => {
     }
   }
 
-  blog.title = title;
-  blog.content = content;
-
-  await blog.save();
+  const updatedBlog = await blog.save();
+  console.log(updatedBlog);
 
   return res
     .status(200)
-    .json(new ApiResponse(200, blog, "updated blog post successfully."));
+    .json(new ApiResponse(200, updatedBlog, "blog updated successfully"));
 });
 
 const deleteBlog = asyncHandler(async (req, res) => {
@@ -116,7 +120,7 @@ const getAllBlogs = asyncHandler(async (req, res) => {
     owner: userId,
   })
     .sort({ createdAt: -1 })
-    .populate("owner", "username email avatar")
+    .populate("owner", "username email avatar");
 
   if (!blogs) {
     throw new ApiError(404, "No blogs found");
@@ -132,8 +136,10 @@ const getSingleBlog = asyncHandler(async (req, res) => {
   if (!blogId) {
     throw new ApiError(400, "Blog id is required");
   }
-  const blog = await Blog.findById(blogId)
-  .populate("owner", "username email avatar")
+  const blog = await Blog.findById(blogId).populate(
+    "owner",
+    "username email avatar"
+  );
   if (!blog) {
     throw new ApiError(400, "blog not found");
   }

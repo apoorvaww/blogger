@@ -13,7 +13,6 @@ const Home = () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/blogs/get-public-blogs`,
-          { withCredentials: true }
         );
         setPosts(response.data.data.blogs);
         console.log(response.data.data.blogs

@@ -22,9 +22,16 @@ router.route("/create-blog-post").post(
   verifyJWT,
   createBlog
 );
-router.route("/update-blog-post").post(verifyJWT, updateBlog);
-router.route("/delete-blog-post").post(verifyJWT, deleteBlog);
-router.route("/get-public-blogs").get(verifyJWT, getPublicBlogs);
+router.route("/update-blog-post/:blogId").post(
+  upload.fields([
+    {
+      name: "coverImage",
+      maxCount: 1
+    }
+  ]),
+  verifyJWT, updateBlog);
+router.route("/delete-blog-post/:blogId").post(verifyJWT, deleteBlog);
+router.route("/get-public-blogs").get(getPublicBlogs);
 router.route("/get-single-blog/:blogId").get(verifyJWT, getSingleBlog);
 router.route("/get-all-blogs/:userId").get(verifyJWT, getAllBlogs);
 

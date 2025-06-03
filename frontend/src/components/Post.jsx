@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
@@ -7,6 +7,8 @@ const Post = () => {
   const blogId = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  // console.log(blogId.id)
   // Fetch blog
   useEffect(() => {
     const fetchBlog = async () => {
@@ -17,6 +19,7 @@ const Post = () => {
           }`,
           { withCredentials: true }
         );
+        console.log(res.data);
         setBlog(res.data.data);
       } catch (error) {
         console.error("Error while fetching blog:", error);
@@ -26,11 +29,9 @@ const Post = () => {
     };
     fetchBlog();
   }, [blogId]);
-  
-  const loggedInUser = useSelector((state) => state.auth.userData);
-//   console.log("logged in user", loggedInUser)
-/// TODO: FIND OUT WHY WHEN YOU RELOAD THIS PAGE THE USER INFO FROM STATE DISAPPEARS
 
+  const loggedInUser = useSelector((state) => state.auth);
+  // console.log(loggedInUser.userData)
 
   if (loading || !blog) {
     return (
@@ -51,10 +52,26 @@ const Post = () => {
 
   const { title, coverImage, content, createdAt, owner, tags = [] } = blog;
   //// Author check logic:
-  console.log("owner: ", owner)
-  
-  const isAuthor = loggedInUser._id === owner._id? true: false;
-  console.log(isAuthor)
+  // console.log("owner: ", owner)
+  // console.log("loggedInUser", loggedInUser.userData)
+
+  const isAuthor = loggedInUser.userData._id === owner._id ? true : false;
+  // console.log(isAuthor)
+
+  const handleDelete = async() =>  {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blogs/delete-blog-post/${blogId.id}`,
+        {},
+        {
+          withCredentials: true
+        }
+      );
+      console.log("deleting post response: ", res.data)
+      navigate('/');
+    } catch (error) {
+      console.error("error in deleting post", error)
+    }
+  }
 
   return (
     <>
@@ -75,15 +92,14 @@ const Post = () => {
 
           {/* Right: User Info */}
           <div className="flex items-center space-x-3">
+            <span className="text-sm font-medium text-gray-700">
+              Welcome, {loggedInUser.userData.username}
+            </span>
             <img
-              src={
-                loggedInUser.avatar}
+              src={loggedInUser.userData.avatar}
               alt="User Avatar"
               className="w-9 h-9 rounded-full object-cover border"
             />
-            <span className="text-sm font-medium text-gray-700">
-              {loggedInUser.username}
-            </span>
           </div>
         </div>
       </header>
@@ -95,9 +111,9 @@ const Post = () => {
             {title}
           </h1>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6">
             {/* Author Info */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3 sm:gap-4">
               <img
                 src={owner?.avatar || "https://www.gravatar.com/avatar/?d=mp"}
                 alt={owner?.username || "Author"}
@@ -115,14 +131,22 @@ const Post = () => {
               </div>
             </div>
 
-            {/* Edit Button (for author only) */}
+            {/* Buttons for Author */}
             {isAuthor && (
-              <a
-                href={`/edit-blog/${blogId.id}`}
-                className="inline-flex items-center px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded hover:bg-teal-700 transition"
-              >
-                ✏️ Edit Post
-              </a>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <a
+                  href={`/edit-blog/${blogId.id}`}
+                  className="inline-flex justify-center items-center px-4 py-2 bg-teal-600 text-white text-sm font-medium rounded hover:bg-teal-700 transition"
+                >
+                  ✏️ Edit Post
+                </a>
+                <button
+                  onClick={handleDelete}
+                  className="inline-flex justify-center items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition"
+                >
+                  🗑️ Delete Post
+                </button>
+              </div>
             )}
           </div>
 
@@ -158,7 +182,7 @@ const Post = () => {
           <p className="text-sm text-gray-600 mb-4">
             Subscribe to get updates on new blog posts!
           </p>
-          <button className="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-full transition">
+          <button className="bg-teal-600 cursor-pointer hover:bg-teal-700 text-white px-5 py-2 rounded-full transition">
             Subscribe
           </button>
         </div>
@@ -172,8 +196,8 @@ const Post = () => {
         {/* Back Button */}
         <div className="mt-16 text-center">
           <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center px-6 py-3 rounded-full text-white bg-teal-600 hover:bg-teal-700 shadow-md transition duration-300"
+            onClick={() => navigate("/")}
+            className="inline-flex items-center cursor-pointer px-6 py-3 rounded-full text-white bg-teal-600 hover:bg-teal-700 shadow-md transition duration-300"
           >
             ← Back to all posts
           </button>
