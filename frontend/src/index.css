@@ -1,0 +1,8 @@
+/* E:\blogger\frontend\src\index.css */
+
+@import "tailwindcss";
+
+/* Add your global body styles here for dark/light mode transition */
+/* body {
+  @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300;
+} */

@@ -220,7 +220,25 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
-  const { fullName, username, email } = req.body;
+  const { fullName, username, email } = req.body || {};
+
+  const userByUsername = await User.findOne({
+    username: username,
+    _id: {$ne: req.user._id}
+  })
+
+  if(userByUsername) {
+    throw new ApiError(409, "Username already exists")
+  }
+
+  const userByEmail = await User.findOne({
+    email,
+    _id: {$ne: req.user._id}
+  })
+
+  if(userByEmail) {
+    throw new ApiError(409, "Email already exists")
+  }
 
   const user = await User.findByIdAndUpdate(
     req.user?._id,
@@ -233,8 +251,13 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     },
     {
       new: true,
+      runValidators: true,
     }
   ).select("-password");
+
+  if(!user) {
+    throw new ApiError(404, "User not found or unauthorized")
+  }
 
   return res
     .status(200)
@@ -242,19 +265,20 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
-  const file = req.file?.path;
+  const file = req.file;
+  console.log("file: ", file);
 
   if (!file) {
     throw new ApiError(400, "avatar file is missing");
   }
 
-  const avatar = await uploadOnCloudinary(file);
+  const avatar = await uploadOnCloudinary(file.path);
 
   if (!avatar) {
     throw new ApiError(400, "error while uploading to cloudinary");
   }
 
-  const user = User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -263,6 +287,10 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     },
     { new: true }
   );
+
+  if(!user) {
+    throw new ApiError(404, "User not found")
+  }
 
   return res
     .status(200)

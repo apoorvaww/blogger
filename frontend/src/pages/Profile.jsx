@@ -52,17 +52,21 @@ const Profile = () => {
 
           {showSettings && (
             <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-xl py-2 z-10 border border-gray-200 transform transition-all duration-300 origin-top-right scale-100 opacity-100">
-                <Link to='/update-account-details'>
-              <button className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-all duration-200">
-                Update account details{" "}
-              </button>
+              <Link to="/update-account-details">
+                <button className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-all duration-200">
+                  Update account details{" "}
+                </button>
               </Link>
-              <button className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-all duration-200">
-                Update Avatar
-              </button>
+              <Link to='/update-avatar'>
+                <button className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-all duration-200">
+                  Update Avatar
+                </button>
+              </Link>
+              <Link to='/update-password'>
               <button className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 transition-all duration-200">
                 Update Password
               </button>
+              </Link>
             </div>
           )}
         </div>

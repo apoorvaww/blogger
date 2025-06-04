@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import Header from "./components/Header/Header.jsx";
 import Footer from "./components/Footer/Footer.jsx";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { login, logout } from "./store/authSlice.js";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
+
 
 function App() {
   const [loading, setLoading] = useState(true);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkUserSession = async () => {
@@ -22,33 +24,27 @@ function App() {
           }
         );
         // console.log("get current user: ", res.data);
-        if (res.data.data) {
+        if (res.data) {
           dispatch(login(res.data.data));
         } else {
+          toast.error("Session expired or no user found. Please login again.")
           dispatch(logout());
+          navigate('/login');
         }
       } catch (error) {
         console.error("error occurred while fetching user's info", error);
+        toast.error("Something went wrong. Please login again.")
+        dispatch(logout());
+        navigate('/login')
       } finally {
         setLoading(false);
       }
     };
     checkUserSession();
-  }, []);
+  }, [dispatch, navigate]);
 
   return !loading ? (
     <div className="min-h-screen flex flex-col justify-between bg-gray-100 font-poppins">
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: "#0f766e", // Tailwind teal-700
-            color: "#fff",
-            fontWeight: "500",
-          },
-        }}
-      />
       <header className="shadow-md bg-white">
         <Header />
       </header>

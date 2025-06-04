@@ -6,7 +6,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const createBlog = asyncHandler(async (req, res, next) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, published } = req.body;
 
     if (!title) {
       throw new ApiError(400, "title is required");
@@ -31,6 +31,7 @@ const createBlog = asyncHandler(async (req, res, next) => {
       content,
       coverImage: coverImageUrl,
       owner: req.user?._id,
+      published: published === "true" || published === true,
     });
 
     return res
@@ -44,7 +45,7 @@ const createBlog = asyncHandler(async (req, res, next) => {
 });
 
 const updateBlog = asyncHandler(async (req, res) => {
-  const {title, content} = req.body || {};
+  const { title, content, published } = req.body || {};
   const { blogId } = req.params;
 
   // if (!title) {
@@ -64,14 +65,16 @@ const updateBlog = asyncHandler(async (req, res) => {
     throw new ApiError(409, "unauthenticated request to update blog.");
   }
 
-  if(title && title!=blog.title) blog.title = title;
-  if(content && content != blog.content) blog.content = content;
+  if (title && title != blog.title) blog.title = title;
+  if (content && content != blog.content) blog.content = content;
+  if (typeof published === "boolean" && published !== blog.published)
+    blog.published = published;
 
   const newCoverImagePath = req.files?.coverImage?.[0]?.path;
 
   if (newCoverImagePath) {
     const newCoverImage = await uploadOnCloudinary(newCoverImagePath);
-    if (newCoverImage) {
+    if (newCoverImage && newCoverImage.url) {
       blog.coverImage = newCoverImage.url;
     } else {
       throw new ApiError(400, "couldn't upload new cover image.");
@@ -150,18 +153,41 @@ const getSingleBlog = asyncHandler(async (req, res) => {
 });
 
 const getPublicBlogs = asyncHandler(async (req, res) => {
-  const blogs = await Blog.find({
-    isDeleted: { $ne: true },
+  const blogsBeforePopulate = await Blog.find({
+    isDeleted: { $ne: true }, // Not soft-deleted
+    published: true, // Explicitly published
   })
-    .populate({
-      path: "owner",
-      select: "username email isPublic avatar",
-      match: { isPublic: true },
-    })
     .sort({
       createdAt: -1,
     })
-    .lean();
+    .lean(); // Use .lean() here to get plain JS objects before populate
+
+  console.log(
+    "Blogs found before populate (showing owner IDs):",
+    blogsBeforePopulate.map((blog) => ({
+      _id: blog._id,
+      title: blog.title,
+      published: blog.published,
+      isDeleted: blog.isDeleted,
+      ownerId: blog.owner, // This will show the raw ObjectId
+    }))
+  );
+
+   const blogs = await Blog.populate(blogsBeforePopulate, {
+      path: "owner",
+      select: "username email avatar",
+  });
+
+  console.log("Blogs after find and populate:", blogs.map(blog => ({
+    _id: blog._id,
+    title: blog.title,
+    published: blog.published,
+    isDeleted: blog.isDeleted,
+    owner: blog.owner ? { // Check if owner is populated
+      _id: blog.owner._id,
+      username: blog.owner.username,
+    } : null
+  })));
 
   if (!blogs) {
     throw new ApiError(500, "No blogs to show yet");
@@ -172,6 +198,8 @@ const getPublicBlogs = asyncHandler(async (req, res) => {
   if (!publicBlogs) {
     throw new ApiError(404, "Couldn't fetch public blogs");
   }
+
+  console.log("public blogs from backend: ", publicBlogs);
 
   return res
     .status(200)

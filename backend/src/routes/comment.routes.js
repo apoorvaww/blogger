@@ -12,7 +12,7 @@ import verifyJWT from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-router.route("/create-comment").post(verifyJWT, createComment);
+router.route("/create-comment/:blogId").post(verifyJWT, createComment);
 router.route("/update-comment/:commentId").post(verifyJWT, updateComment);
 router.route("/delete-comment/:commentId").post(verifyJWT, deleteComment);
 router

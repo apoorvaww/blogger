@@ -13,7 +13,7 @@ const EditPost = () => {
       title: "",
       slug: "",
       content: "",
-      status: "inactive",
+      status: "",
     },
   });
   // console.log("control to rte", control);
@@ -37,6 +37,7 @@ const EditPost = () => {
   // Reset form with post values once available
   useEffect(() => {
     if (post) {
+      isPublished = data.status === 'active'
       reset({
         title: post.title || "",
         slug: post.slug || "",

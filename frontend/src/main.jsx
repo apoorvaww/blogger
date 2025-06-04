@@ -17,6 +17,8 @@ import EditPost from "./pages/EditPost.jsx";
 import Post from "./components/Post.jsx";
 import Profile from "./pages/Profile.jsx";
 import UpdateDetails from "./pages/UpdateDetails.jsx";
+import UpdateProfilePicture from "./pages/UpdateProfilePicture.jsx";
+import UpdatePassword from "./pages/UpdatePassword.jsx";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +41,14 @@ const router = createBrowserRouter([
         path: "/update-account-details",
         element: <UpdateDetails />,
       },
+      {
+        path: '/update-avatar',
+        element: <UpdateProfilePicture/>
+      },
+      {
+        path: '/update-password',
+        element: <UpdatePassword/>
+      }
     ],
   },
   {
@@ -67,28 +77,28 @@ createRoot(document.getElementById("root")).render(
           position="bottom-right"
           reverseOrder={false}
           toastOptions={{
-            className: "",
             duration: 4000,
             style: {
-              background: "#ffffff",
-              color: "#1f2937",
-              border: "1px solid #e5e7eb",
-              padding: "12px 16px",
-              borderRadius: "12px",
-              boxShadow: "0 8px 24px rgba(0, 0, 0, 0.1)",
-              fontSize: "14px",
+              background: "#ffffff", 
+              color: "#374151",
+              border: "1px solid #e5e7eb", 
+              padding: "16px 20px", 
+              borderRadius: "12px", 
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.08)", 
+              fontSize: "15px", 
+              fontWeight: "500", // Medium font weight
             },
             success: {
               style: {
-                background: "#ecfdf5",
-                color: "#065f46",
-                border: "1px solid #d1fae5",
+                background: "#f0fdf4", 
+                color: "#166534", 
+                border: "1px solid #dcfce7", 
               },
             },
             error: {
               style: {
-                background: "#fef2f2",
-                color: "#991b1b",
+                background: "#fff1f2", 
+                color: "#991b1b", 
                 border: "1px solid #fecaca",
               },
             },

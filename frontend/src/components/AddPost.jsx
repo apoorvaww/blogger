@@ -28,8 +28,10 @@ const AddPost = ({ post }) => {
       formdata.append("title", data.title);
       formdata.append("slug", data.slug);
       formdata.append("content", data.content);
-      formdata.append("published", data.status === "active");
       formdata.append("owner", userData.$id);
+      const isPublished = data.status === 'active';
+      console.log(data);
+      formdata.append("published",isPublished)
 
       if (data.image?.[0]) {
         formdata.append("coverImage", data.image[0]);
