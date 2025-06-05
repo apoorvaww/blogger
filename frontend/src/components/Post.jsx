@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import Comment from "./Comment";
 
 const Post = () => {
   const blogId = useParams();
@@ -51,9 +52,6 @@ const Post = () => {
   }
 
   const { title, coverImage, content, createdAt, owner, tags = [] } = blog;
-  //// Author check logic:
-  // console.log("owner: ", owner)
-  // console.log("loggedInUser", loggedInUser.userData)
 
   const isAuthor = loggedInUser.userData._id === owner._id ? true : false;
   // console.log(isAuthor)
@@ -192,6 +190,11 @@ const Post = () => {
           className="prose prose-lg sm:prose-xl prose-teal max-w-none text-gray-900 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: content }}
         />
+
+        
+        <div className="mt-16">
+          <Comment blogId={blogId} commentCount={blog.commentsCount} />
+        </div>
 
         {/* Back Button */}
         <div className="mt-16 text-center">

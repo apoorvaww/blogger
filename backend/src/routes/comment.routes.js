@@ -7,8 +7,8 @@ import {
   getCommentsOnBlog,
   getRepliesOnComment,
   updateComment,
-} from "../controllers/comment.controller";
-import verifyJWT from "../middleware/auth.middleware.js";
+} from "../controllers/comment.controller.js";
+import {verifyJWT} from "../middleware/auth.middleware.js";
 
 const router = Router();
 
@@ -21,7 +21,7 @@ router
 router
   .route("/delete-reply-to-comment/:replyId")
   .post(verifyJWT, deleteReplyOnComment);
-router.route("get-comments-on-blog/:blogId").get(getCommentsOnBlog);
+router.route("/get-comments-on-blog/:blogId").get(getCommentsOnBlog);
 router
   .route("/get-replies-on-comment/:parentCommentId")
   .get(getRepliesOnComment);

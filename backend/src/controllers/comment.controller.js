@@ -86,6 +86,7 @@ const deleteComment = asyncHandler(async (req, res) => {
 
 const getCommentsOnBlog = asyncHandler(async (req, res) => {
   const { blogId } = req.params;
+  console.log(blogId)
   const { page = 1, limit = 10, keyword } = req.query;
 
   if (!blogId) {
@@ -135,7 +136,7 @@ const addReplyToComment = asyncHandler(async(req, res) => {
   if(!parentCommentId) {
     throw new ApiError(400, "Parent comment id is required");
   };
-  if(!content){
+  if(!replyContent){
     throw new ApiError(400, "content of comment is required");
   }
 
