@@ -34,7 +34,7 @@ const Post = () => {
   }, [blogId]);
 
   const loggedInUser = useSelector((state) => state.auth);
-  // console.log(loggedInUser.userData)
+  console.log(loggedInUser.userData)
 
   if (loading || !blog) {
     return (
@@ -97,6 +97,7 @@ const Post = () => {
               src={loggedInUser.userData.avatar}
               alt="User Avatar"
               className="w-9 h-9 rounded-full object-cover border"
+              
             />
           </div>
         </div>

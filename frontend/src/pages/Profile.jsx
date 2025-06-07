@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { FiSettings } from "react-icons/fi"; // Assuming FiSettings is still desired
-import toast from "react-hot-toast"; // Assuming toast is still used
-import PostCard from "../components/PostCard"; // Assuming PostCard component exists
+import { FiSettings } from "react-icons/fi"; 
+import toast from "react-hot-toast"; 
+import PostCard from "../components/PostCard"; 
 
 const Profile = () => {
   const { userId } = useParams();
@@ -13,7 +13,6 @@ const Profile = () => {
   useEffect(() => {
     const getAllBlogs = async () => {
       try {
-        // Ensure VITE_BACKEND_URL is correctly configured in your environment
         const res = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/blogs/get-all-blogs/${userId}`,
           { withCredentials: true }

@@ -121,6 +121,7 @@ const getAllBlogs = asyncHandler(async (req, res) => {
   }
   const blogs = await Blog.find({
     owner: userId,
+    isDeleted: {$ne: true}
   })
     .sort({ createdAt: -1 })
     .populate("owner", "username email avatar");
@@ -154,14 +155,13 @@ const getSingleBlog = asyncHandler(async (req, res) => {
 
 const getPublicBlogs = asyncHandler(async (req, res) => {
   const blogsBeforePopulate = await Blog.find({
-    isDeleted: { $ne: true }, // Not soft-deleted
-    published: true, // Explicitly published
+    isDeleted: { $ne: true }, 
+    published: true, 
   })
     .sort({
       createdAt: -1,
     })
-    .lean(); // Use .lean() here to get plain JS objects before populate
-
+    .lean(); 
   console.log(
     "Blogs found before populate (showing owner IDs):",
     blogsBeforePopulate.map((blog) => ({

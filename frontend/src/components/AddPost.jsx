@@ -5,8 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 const AddPost = ({ post }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { register, handleSubmit, watch, setValue, control, getValues } =
     useForm({
       defaultValues: {
@@ -23,15 +26,16 @@ const AddPost = ({ post }) => {
 
   const submit = async (data) => {
     try {
-      console.log("data", data)
+      setIsSubmitting(true);
+      console.log("data", data);
       const formdata = new FormData();
       formdata.append("title", data.title);
       formdata.append("slug", data.slug);
       formdata.append("content", data.content);
       formdata.append("owner", userData.$id);
-      const isPublished = data.status === 'active';
+      const isPublished = data.status === "active";
       console.log(data);
-      formdata.append("published",isPublished)
+      formdata.append("published", isPublished);
 
       if (data.image?.[0]) {
         formdata.append("coverImage", data.image[0]);
@@ -48,11 +52,13 @@ const AddPost = ({ post }) => {
         }
       );
       console.log(response.data.data);
-      toast.success("Blog Post Created Successfully")
-      navigate(`/post/${response.data.data.blog._id}`)
+      toast.success("Blog Post Created Successfully");
+      navigate(`/post/${response.data.data.blog._id}`);
     } catch (error) {
       console.error("error occurred while creating blog post", error);
-      toast.error( error.message);
+      toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -107,15 +113,16 @@ const AddPost = ({ post }) => {
                 })
               }
             />
-            {control && (<RTE
-              label="Content"
-              name="content"
-              control={control}
-              // defaultValue={getValues("content")}
-            />)}
+            {control && (
+              <RTE
+                label="Content"
+                name="content"
+                control={control}
+                // defaultValue={getValues("content")}
+              />
+            )}
           </div>
 
-          {/* Right column - sidebar */}
           <div className="w-full lg:w-[320px] space-y-4">
             <Input
               label="Featured Image"
@@ -137,12 +144,22 @@ const AddPost = ({ post }) => {
               options={["active", "inactive"]}
               {...register("status", { required: true })}
             />
-            <Button
+            <button
               type="submit"
+              disabled={isSubmitting}
               className="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-xl shadow transition"
             >
-              {post ? "Update" : "Submit"}
-            </Button>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin w-5 h-5" />
+                  Uploading...{" "}
+                </>
+              ) : post ? (
+                "Update"
+              ) : (
+                "Submit"
+              )}
+            </button>
           </div>
         </form>
       </div>

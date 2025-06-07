@@ -18,32 +18,26 @@ const Header = () => {
     { name: "Login", slug: "/login", active: !authStatus },
     { name: "Signup", slug: "/sign-up", active: !authStatus },
     { name: "Add Post", slug: "/add-post", active: authStatus },
-    // Only include Profile if authData and _id are available
     { name: "Profile", slug: `/profile/u/${authData?._id}`, active: authStatus && authData?._id },
   ];
 
   const toggleMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   return (
-    <header className="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200"> {/* Added shadow-lg and subtle border */}
+    <header className="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200"> 
       <Container>
         <nav className="flex items-center justify-between py-4">
           {/* Logo */}
           <Link
             to="/"
-            className="text-3xl font-extrabold text-teal-600 hover:text-teal-700 tracking-wide transition-colors duration-200" // Larger text, hover effect
+            className="text-3xl font-extrabold text-teal-600 hover:text-teal-700 tracking-wide transition-colors duration-200" 
           >
             Blogger
           </Link>
 
-          {/* Desktop Navigation */}
-          <ul className="hidden md:flex items-center gap-6"> {/* Increased gap */}
-            {/* Dark Theme Toggle (Placeholder) */}
-            <li className="text-slate-600 text-sm hover:text-slate-800 transition-colors duration-200 cursor-pointer">
-              Dark Theme
-            </li>
+          <ul className="hidden md:flex items-center gap-6"> 
 
-            {/* Dynamic Navigation Items */}
+            
             {navItems.map((item) =>
               item.active ? (
                 <li key={item.name}>
@@ -57,23 +51,23 @@ const Header = () => {
               ) : null
             )}
 
-            {/* Authenticated User Items */}
+            
             {authStatus && (
-              <li className="flex items-center gap-3"> {/* Adjusted gap to 3 */}
+              <li className="flex items-center gap-3"> 
                 <LogoutBtn />
-                {/* User Avatar */}
-                {authData && authData.avatar ? ( // Check if authData and avatar exist
-                  <Link to={`/profile/u/${authData._id}`}> {/* Make avatar clickable to profile */}
+                
+                {authData && authData.avatar ? ( 
+                  <Link to={`/profile/u/${authData._id}`}> 
                     <img
                       src={authData.avatar}
                       alt="User Avatar"
-                      className="w-10 h-10 rounded-full object-cover border-2 border-teal-500 shadow-md cursor-pointer transform hover:scale-105 transition-transform duration-200" // Added hover effect
+                      className="w-10 h-10 rounded-full object-cover border-2 border-teal-500 shadow-md cursor-pointer transform hover:scale-105 transition-transform duration-200"
                     />
                   </Link>
                 ) : (
-                  // Placeholder for avatar if not available
+                 
                   <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-sm font-semibold">
-                    {/* Optionally display first letter of username or initials */}
+                    
                     {authData?.username ? authData.username.charAt(0).toUpperCase() : 'U'}
                   </div>
                 )}
@@ -85,7 +79,7 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={toggleMenu}
-              className="p-2 text-teal-600 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md transition-colors duration-200" // Added padding, focus ring
+              className="p-2 text-teal-600 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500 rounded-md transition-colors duration-200" 
             >
               {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -105,7 +99,7 @@ const Header = () => {
                         navigate(item.slug);
                         setMobileMenuOpen(false); // Close menu on navigation
                       }}
-                      className="w-full text-left inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200 shadow-sm" // Full width mobile button
+                      className="w-full text-left inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200 shadow-sm"
                     >
                       {item.name}
                     </Button>
@@ -113,11 +107,11 @@ const Header = () => {
                 ) : null
               )}
               {authStatus && (
-                <li className="pt-2 border-t border-gray-100"> {/* Separator */}
-                  <LogoutBtn className="w-full" /> {/* Make LogoutBtn full width too */}
+                <li className="pt-2 border-t border-gray-100"> 
+                  <LogoutBtn className="w-full" />  
                 </li>
               )}
-               {authStatus && authData && ( // Display avatar in mobile menu if authenticated
+               {authStatus && authData && ( 
                  <li className="flex items-center gap-3 mt-3">
                    {authData.avatar ? (
                      <Link to={`/profile/u/${authData._id}`} onClick={() => setMobileMenuOpen(false)}>
