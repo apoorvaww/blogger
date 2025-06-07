@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import Comment from "./Comment";
+import ConfirmModal from "./ConfirmModal";
 
 const Post = () => {
   const blogId = useParams();
@@ -10,7 +11,8 @@ const Post = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   // console.log(blogId.id)
-  // Fetch blog
+  const[deleteModal, setDeleteModal] =useState(false);
+  
   useEffect(() => {
     const fetchBlog = async () => {
       try {
@@ -79,7 +81,6 @@ const Post = () => {
           {/* Left: Blog Logo */}
           <h1 className="text-xl font-bold text-teal-700">Blogger</h1>
 
-          {/* Center: Search Bar */}
           <div className="flex-1 mx-6 max-w-md">
             <input
               type="text"
@@ -88,7 +89,6 @@ const Post = () => {
             />
           </div>
 
-          {/* Right: User Info */}
           <div className="flex items-center space-x-3">
             <span className="text-sm font-medium text-gray-700">
               Welcome, {loggedInUser.userData.username}
@@ -129,7 +129,6 @@ const Post = () => {
               </div>
             </div>
 
-            {/* Buttons for Author */}
             {isAuthor && (
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <a
@@ -139,7 +138,9 @@ const Post = () => {
                   ✏️ Edit Post
                 </a>
                 <button
-                  onClick={handleDelete}
+                  onClick={() => {
+                    setDeleteModal(true);
+                  }}
                   className="inline-flex justify-center items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition"
                 >
                   🗑️ Delete Post
@@ -148,7 +149,6 @@ const Post = () => {
             )}
           </div>
 
-          {/* Tags */}
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-6">
               {tags.map((tag, i) => (
@@ -172,7 +172,6 @@ const Post = () => {
           />
         )}
 
-        {/* Email Subscribe CTA */}
         <div className="mb-10 p-6 bg-teal-50 rounded-xl border border-teal-200 shadow-sm text-center">
           <h3 className="text-lg font-semibold text-gray-800 mb-2">
             Enjoying this post?
@@ -185,7 +184,6 @@ const Post = () => {
           </button>
         </div>
 
-        {/* Blog Content */}
         <article
           className="prose prose-lg sm:prose-xl prose-teal max-w-none text-gray-900 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: content }}
@@ -196,7 +194,6 @@ const Post = () => {
           <Comment blogId={blogId} commentCount={blog.commentsCount} />
         </div>
 
-        {/* Back Button */}
         <div className="mt-16 text-center">
           <button
             onClick={() => navigate("/")}
@@ -205,6 +202,12 @@ const Post = () => {
             ← Back to all posts
           </button>
         </div>
+        <ConfirmModal
+        isOpen={deleteModal}
+        onClose={()=>setDeleteModal(false)}
+        onConfirm={handleDelete}
+        message="Are you sure you want to delete this post?"
+        />
       </div>
     </>
   );

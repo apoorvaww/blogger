@@ -64,6 +64,7 @@ const updateComment = asyncHandler(async (req, res) => {
 
 const deleteComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
+  console.log(req.user)
   if (!commentId) {
     throw new ApiError(400, "Comment id is required");
   }
@@ -72,7 +73,7 @@ const deleteComment = asyncHandler(async (req, res) => {
   if (!comment) {
     throw new ApiError(404, "Comment not found");
   }
-  if (comment.owner.toString() !== req.user._id) {
+  if (comment.owner._id.toString() !== req.user._id.toString()) {
     throw new ApiError(403, "You are not authenticated to delete this comment");
   }
 
@@ -94,7 +95,7 @@ const getCommentsOnBlog = asyncHandler(async (req, res) => {
   }
 
   const skip = (page - 1) * limit;
-  let query = {blog: blogId, isDeleted: false};
+  let query = {blog: blogId, isDeleted: false, parentComment: null};
 
   if(keyword) {
     query.content = {$regex: keyword, $options: "i"};

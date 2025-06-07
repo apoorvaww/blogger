@@ -6,22 +6,27 @@ import axios from "axios";
 import { Input, Select, RTE, Button } from "../components/index.js";
 
 const EditPost = () => {
-  const blogId = useParams()
+  const { blogId } = useParams(); // destructure here for clarity
   const [post, setPost] = useState(null);
-  const { register, handleSubmit, setValue, watch, control, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm({
     defaultValues: {
       title: "",
       slug: "",
       content: "",
-      status: "",
+      status: "inactive", // set default status
     },
   });
-  // console.log("control to rte", control);
-  console.log(blogId.blogId)
 
   const navigate = useNavigate();
   const userData = useSelector((state) => state.auth.userData);
-  // console.log(userData)
 
   const slugTransform = useCallback((value) => {
     if (value && typeof value === "string") {
@@ -37,12 +42,11 @@ const EditPost = () => {
   // Reset form with post values once available
   useEffect(() => {
     if (post) {
-      isPublished = data.status === 'active'
       reset({
         title: post.title || "",
         slug: post.slug || "",
         content: post.content || "",
-        status: post.published ? "active" : "inactive",
+        status: post.published ? "active" : "inactive", // make sure your post has 'published' boolean
       });
     }
   }, [post, reset]);
@@ -51,30 +55,30 @@ const EditPost = () => {
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "title") {
-        setValue("slug", slugTransform(value.title), {
-          shouldValidate: true,
-        });
+        setValue("slug", slugTransform(value.title), { shouldValidate: true });
       }
     });
     return () => subscription.unsubscribe();
   }, [watch, slugTransform, setValue]);
 
-  useEffect(()=>{
-    const getPost = async() => {
+  useEffect(() => {
+    const getPost = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/blogs/get-single-blog/${blogId.blogId}`, {
-          withCredentials: true
-        })
-        // console.log(res.data.data)
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/blogs/get-single-blog/${blogId}`,
+          {
+            withCredentials: true,
+          }
+        );
         setPost(res.data.data);
       } catch (error) {
-        console.error("error while fetching post:", error)
+        console.error("error while fetching post:", error);
       }
-    }
-    if(blogId) {
+    };
+    if (blogId) {
       getPost();
     }
-  },[blogId])
+  }, [blogId]);
 
   const onSubmit = async (data) => {
     try {
@@ -89,15 +93,15 @@ const EditPost = () => {
       }
 
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/blogs/update-blog-post/${post._id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/blogs/update-blog-post/${
+          post._id
+        }`,
         formData,
         {
           withCredentials: true,
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-
-      console.log("response after updating: ", response.data.data)
 
       if (response.data.success) {
         navigate(`/post/${response.data.data._id}`);
@@ -107,7 +111,9 @@ const EditPost = () => {
     }
   };
 
-
+  if (!post) {
+    return <p className="text-center mt-20">Loading post data...</p>;
+  }
 
   return (
     <form
@@ -120,30 +126,43 @@ const EditPost = () => {
           label="Title :"
           placeholder="Enter post title"
           className="mb-4"
-          {...register("title", { required: true })}
+          {...register("title", { required: "Title is required" })}
         />
+        {errors.title && (
+          <p className="text-red-600 text-sm mb-2">{errors.title.message}</p>
+        )}
 
         <Input
           label="Slug :"
           placeholder="Post slug"
           className="mb-4"
-          {...register("slug", { required: true })}
+          {...register("slug", { required: "Slug is required" })}
           onInput={(e) =>
             setValue("slug", slugTransform(e.currentTarget.value), {
               shouldValidate: true,
             })
           }
         />
+        {errors.slug && (
+          <p className="text-red-600 text-sm mb-2">{errors.slug.message}</p>
+        )}
 
-        {/* Controlled RTE */}
-
-        {post &&(<RTE
-          label="Content :"
+        <Controller
+          name="content"
           control={control}
-          // value={field.value}
-          // onChange={field.onChange}
-          defaultValue={post?.content || ""}
-        />)}
+          rules={{ required: "Content is required" }}
+          render={({ field }) => (
+            <RTE
+              label="Content :"
+              control={control}
+              name="content"
+              defaultValue={post?.content || ""}
+            />
+          )}
+        />
+        {errors.content && (
+          <p className="text-red-600 text-sm mb-2">{errors.content.message}</p>
+        )}
       </div>
 
       {/* Sidebar Section */}

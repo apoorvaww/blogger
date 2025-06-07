@@ -1,68 +1,214 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { FiMoreVertical } from "react-icons/fi";
+import ConfirmModal from "./ConfirmModal.jsx";
 
-const CommentItem = ({ comment, onReply }) => {
-  const [showReplyInput, setShowReplyInput] = useState(false);
+const CommentItem = ({ comment, blogId, fetchComments, depth = 0 }) => {
+  const [showReplies, setShowReplies] = useState(false);
+  const [replies, setReplies] = useState([]);
   const [replyText, setReplyText] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editText, setEditText] = useState(comment.content);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const handleReplySubmit = () => {
-    if (replyText.trim()) {
-      onReply(comment._id, replyText);
-      setReplyText("");
-      setShowReplyInput(false);
+  const getReplies = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/comments/get-replies-on-comment/${
+          comment._id
+        }`
+      );
+      setReplies(res.data?.data || []);
+    } catch (error) {
+      console.error("Error fetching replies:", error);
+      toast.error("Couldn't fetch replies. Try again later!");
     }
   };
-  // console.log("comment on commentitem: ", comment);
+
+  const toggleReplies = async () => {
+    if (!showReplies) {
+      await getReplies();
+    }
+    setShowReplies((prev) => !prev);
+  };
+
+  const handleReply = async () => {
+    if (!replyText.trim()) return toast.error("Reply cannot be empty!");
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/comments/add-reply-to-comment/${
+          comment._id
+        }`,
+        { replyContent: replyText },
+        { withCredentials: true }
+      );
+      toast.success("Reply added!");
+      setReplyText("");
+      console.log(res.data.data);
+      getReplies(); // Refresh replies
+    } catch (error) {
+      console.error("Reply failed:", error);
+      toast.error(error.response?.data?.message || "Reply failed");
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!editText.trim()) return toast.error("Comment cannot be empty!");
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/comments/update-comment/${
+          comment._id
+        }`,
+        { updatedContent: editText },
+        { withCredentials: true }
+      );
+      toast.success("Comment updated");
+      setIsEditing(false);
+      fetchComments();
+    } catch (error) {
+      console.error("Update failed:", error);
+      toast.error("Failed to update comment");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/comments/delete-comment/${
+          comment._id
+        }`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success("Comment deleted");
+      fetchComments();
+    } catch (error) {
+      console.error("Delete failed:", error);
+      toast.error("Failed to delete comment");
+    } finally {
+      setShowDeleteModal(false);
+    }
+  };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md mb-4 border border-gray-300">
-      <div className="flex items-center mb-2">
-        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-          {comment.owner?.username?.charAt(0) || "U"}
-        </div>
-        <div>
-          <p className="font-semibold text-gray-800">
-            {comment.owner?.username || "Anonymous"}
-          </p>
-          <p className="text-xs text-gray-500">
-            {new Date(comment.createdAt).toLocaleString()}
-          </p>
-        </div>
+    <div
+      className={`border border-teal-200 p-4 rounded-lg shadow-sm relative mt-4 ${
+        depth > 0 ? "ml-8 border-l-4 border-teal-300" : ""
+      }`}
+    >
+      {/* 3-dot menu */}
+      <div className="absolute top-2 right-2">
+        <button onClick={() => setMenuOpen((prev) => !prev)}>
+          <FiMoreVertical />
+        </button>
+        {menuOpen && (
+          <div className="absolute right-0 mt-2 w-32 bg-white shadow rounded z-10 text-sm border">
+            <button
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              onClick={() => {
+                setIsEditing(true);
+                setMenuOpen(false);
+              }}
+            >
+              ✏️ Edit
+            </button>
+            <button
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+              onClick={() => {
+                setShowDeleteModal(true);
+                setMenuOpen(false);
+              }}
+            >
+              🗑️ Delete
+            </button>
+          </div>
+        )}
       </div>
 
-      <p className="text-gray-900 mb-3">{comment.content}</p>
+      {/* Avatar & Username */}
+      <div className="flex items-center gap-3 mb-2">
+        <img
+          src={comment.owner?.avatar || "https://via.placeholder.com/40"}
+          alt="Avatar"
+          className="w-10 h-10 rounded-full"
+        />
+        <span className="font-bold text-teal-800">
+          {comment.owner?.username || "Anonymous"}
+        </span>
+      </div>
+
+      {isEditing ? (
+        <>
+          <textarea
+            value={editText}
+            onChange={(e) => setEditText(e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+          <div className="mt-2 flex gap-2">
+            <button
+              className="px-3 py-1 bg-teal-600 text-white rounded hover:bg-teal-700"
+              onClick={handleUpdate}
+            >
+              Save
+            </button>
+            <button
+              className="px-3 py-1 bg-gray-300 rounded"
+              onClick={() => {
+                setIsEditing(false);
+                setEditText(comment.content);
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </>
+      ) : (
+        <p className="text-gray-800 mb-2 whitespace-pre-wrap">
+          {comment.content}
+        </p>
+      )}
 
       <button
-        onClick={() => setShowReplyInput(!showReplyInput)}
-        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+        onClick={toggleReplies}
+        className="text-sm text-teal-600 font-semibold hover:underline"
       >
-        {showReplyInput ? "Cancel Reply" : "Reply"}
+        {showReplies ? "Hide Replies" : "View Replies"}
       </button>
 
-      {showReplyInput && (
-        <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-          <textarea
-            className="w-full p-2 border border-gray-300 rounded-md text-gray-700"
-            rows="2"
-            placeholder={`Reply to ${comment.owner?.username || "this comment"}...`}
-            value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-          ></textarea>
-          <button
-            onClick={handleReplySubmit}
-            className="mt-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-md"
-          >
-            Post Reply
-          </button>
-        </div>
-      )}
+      <div className="mt-2">
+        <textarea
+          className="w-full p-2 border rounded text-sm"
+          rows="2"
+          placeholder="Write a reply..."
+          value={replyText}
+          onChange={(e) => setReplyText(e.target.value)}
+        />
+        <button
+          onClick={handleReply}
+          className="mt-1 px-4 py-1 text-sm bg-teal-600 text-white rounded hover:bg-teal-700"
+        >
+          Reply
+        </button>
+      </div>
 
-      {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-6 mt-4 border-l-2 border-gray-200 pl-4">
-          {comment.replies.map((reply) => (
-            <CommentItem key={reply._id} comment={reply} onReply={onReply} />
-          ))}
-        </div>
-      )}
+      {showReplies &&
+        replies.map((reply) => (
+          <CommentItem
+            key={reply._id}
+            comment={reply}
+            blogId={blogId}
+            fetchComments={fetchComments}
+            depth={depth + 1}
+          />
+        ))}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        message="Are you sure you want to delete this comment?"
+      />
     </div>
   );
 };

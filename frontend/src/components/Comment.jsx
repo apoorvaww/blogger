@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+import CommentItem from "./CommentItem";
 
 const Comment = ({ blogId }) => {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [replyText, setReplyText] = useState({});
-  const [showReplies, setShowReplies] = useState({}); // Track which comments show replies
+  const [showReplies, setShowReplies] = useState({});
 
   const fetchComments = async () => {
     try {
@@ -15,6 +16,7 @@ const Comment = ({ blogId }) => {
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/comments/get-comments-on-blog/${blogId.id}`
       );
+      console.log("comments:", res.data.data);
       const fetchedComments = res.data?.data?.comments || [];
       setComments(fetchedComments);
     } catch (error) {
@@ -30,10 +32,7 @@ const Comment = ({ blogId }) => {
   }, [blogId]);
 
   const handleSubmit = async () => {
-    if (!commentText.trim()) {
-      toast.error("Comment cannot be empty!");
-      return;
-    }
+    if (!commentText.trim()) return toast.error("Comment cannot be empty!");
     try {
       await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/comments/create-comment/${blogId.id}`,
@@ -45,38 +44,8 @@ const Comment = ({ blogId }) => {
       fetchComments();
     } catch (error) {
       console.error("Error creating comment:", error);
-      const errResponse = error.response?.data?.message;
-      toast.error(errResponse || "Failed to add comment.");
+      toast.error(error.response?.data?.message || "Failed to add comment.");
     }
-  };
-
-  const handleReply = async (parentId) => {
-    const replyContent = replyText[parentId]?.trim();
-    if (!replyContent) {
-      toast.error("Reply cannot be empty!");
-      return;
-    }
-    try {
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/comments/add-reply-to-comment/${parentId}`,
-        { replyContent: replyContent },
-        { withCredentials: true }
-      );
-      toast.success("Reply added successfully!");
-      setReplyText((prev) => ({ ...prev, [parentId]: "" }));
-      fetchComments();
-    } catch (error) {
-      console.error("Error adding reply:", error);
-      const errResponse = error.response?.data?.message;
-      toast.error(errResponse || "Failed to add reply.");
-    }
-  };
-
-  const toggleReplies = (commentId) => {
-    setShowReplies((prev) => ({
-      ...prev,
-      [commentId]: !prev[commentId],
-    }));
   };
 
   return (
@@ -85,7 +54,6 @@ const Comment = ({ blogId }) => {
         💬 Comments ({comments.length})
       </h2>
 
-      {/* New Comment Input */}
       <div className="mb-10">
         <textarea
           className="w-full p-4 border border-teal-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-teal-500 focus:outline-none"
@@ -114,77 +82,9 @@ const Comment = ({ blogId }) => {
           {comments.map((comment) => (
             <div
               key={comment._id}
-              className="border border-teal-200 p-4 rounded-lg shadow-sm"
             >
-              <div className="flex items-center space-x-3 mb-2">
-                <img
-                  src={
-                    comment.owner?.avatar || "https://via.placeholder.com/40"
-                  }
-                  alt="Avatar"
-                  className="w-10 h-10 rounded-full"
-                />
-                <span className="font-bold text-teal-800">
-                  {comment.owner?.username || "Anonymous"}
-                </span>
-              </div>
-              <p className="text-gray-800 mb-3">{comment.content}</p>
-
-              {/* Show Replies Button */}
-              {comment.replies && comment.replies.length > 0 && (
-                <button
-                  onClick={() => toggleReplies(comment._id)}
-                  className="text-sm font-semibold text-teal-600 hover:underline mb-3"
-                >
-                  {showReplies[comment._id] ? "Hide Replies" : `Show Replies (${comment.replies.length})`}
-                </button>
-              )}
-
-              {/* Replies List (conditionally rendered) */}
-              {showReplies[comment._id] && comment.replies && (
-                <div className="pl-8 border-l-2 border-teal-300 space-y-4">
-                  {comment.replies.map((reply) => (
-                    <div
-                      key={reply._id}
-                      className="bg-teal-50 p-3 rounded shadow-sm"
-                    >
-                      <div className="flex items-center space-x-3 mb-1">
-                        <img
-                          src={reply.owner?.avatar || "https://via.placeholder.com/30"}
-                          alt="Avatar"
-                          className="w-8 h-8 rounded-full"
-                        />
-                        <span className="font-semibold text-teal-700">
-                          {reply.owner?.username || "Anonymous"}
-                        </span>
-                      </div>
-                      <p className="text-gray-700">{reply.content}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Reply Box */}
-              <div className="mt-3">
-                <textarea
-                  className="w-full p-2 border border-gray-300 rounded focus:ring-teal-400"
-                  rows="2"
-                  placeholder="Write a reply..."
-                  value={replyText[comment._id] || ""}
-                  onChange={(e) =>
-                    setReplyText((prev) => ({
-                      ...prev,
-                      [comment._id]: e.target.value,
-                    }))
-                  }
-                ></textarea>
-                <button
-                  onClick={() => handleReply(comment._id)}
-                  className="mt-2 px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
-                >
-                  Reply
-                </button>
-              </div>
+              
+              <CommentItem comment={comment} blogId={blogId} fetchComments={fetchComments} />
             </div>
           ))}
         </div>
