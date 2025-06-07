@@ -1,3 +1,27 @@
+This is a full-stack Blogger Web App that empowers users to create, edit, and publish rich-text blog posts with cover images. It offers a seamless writing and reading experience, complete with user authentication, image uploads, and a responsive UI.
+
+Built using the MERN (MongoDB, Express, React, Node.js) stack, the platform showcases modern React development practices with real-world features like:
+
+JWT-based login/signup
+
+Rich Text Editing via TinyMCE
+
+Image uploads via Cloudinary
+
+API interaction with Axios
+
+Messages to user with React Hot Toast
+
+Form handling via React Hook Form
+
+Dynamic routing with React Router DOM
+
+This project helped me dive deeper into full-stack development and polish my skills around RESTful API integration, frontend architecture, and UI/UX best practices.
+
+Whether you're a content creator or a developer looking to learn from real-world implementations—this app is a practical example of combining backend functionality with a sleek, responsive frontend.
+
+
+
 Login Page:
 
 ![Screenshot 2025-06-07 141331](https://github.com/user-attachments/assets/bb7a8ca5-4776-4e17-a3a4-682e511bd682)
