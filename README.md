@@ -104,7 +104,9 @@ Cloudinary (for image hosting)
 
 📁 FOLDER STRUCTURE:
 
-<pre> blogger-app/ ├── frontend/ (React) │ ├── components/ # Reusable UI components (Input, Button, RTE, etc.) │ ├── pages/ # Main page views (Home, Profile, etc.) │ ├── store/ # Auth slices and configuration │ ├── App.jsx # App root with route structure │ └── main.jsx # Entry point for the React app │ ├── backend/ # Backend (Node.js + Express) │ ├── controllers/ # Controller functions for route logic │ ├── models/ # Mongoose schemas for MongoDB collections │ ├── routes/ # API route definitions │ ├── middlewares/ # Custom middleware (auth, error handlers, and upload function for cloudinary etc.) │ ├── utils/ # Utility functions (like Cloudinary uploader) │ └── index.js # App entry point and server setup │ ├── .env # Environment variables for server ├── package.json # Root config (or separate for client/server) └── README.md # Project documentation </pre>
+<pre> blogger-app/ ├── frontend/ (React) 
+  │ ├── components/ # Reusable UI components (Input, Button, RTE, etc.) 
+  │ ├── pages/ # Main page views (Home, Profile, etc.) │ ├── store/ # Auth slices and configuration │ ├── App.jsx # App root with route structure │ └── main.jsx # Entry point for the React app │ ├── backend/ # Backend (Node.js + Express) │ ├── controllers/ # Controller functions for route logic │ ├── models/ # Mongoose schemas for MongoDB collections │ ├── routes/ # API route definitions │ ├── middlewares/ # Custom middleware (auth, error handlers, and upload function for cloudinary etc.) │ ├── utils/ # Utility functions (like Cloudinary uploader) │ └── index.js # App entry point and server setup │ ├── .env # Environment variables for server ├── package.json # Root config (or separate for client/server) └── README.md # Project documentation </pre>
 
 
 
