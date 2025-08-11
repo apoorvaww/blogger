@@ -1,38 +1,40 @@
+## BLOGGER:   
+
 This is a full-stack Blogger Web App that empowers users to create, edit, and publish rich-text blog posts with cover images. It offers a seamless writing and reading experience, complete with user authentication, image uploads, and a responsive UI.
 
 Built using the MERN (MongoDB, Express, React, Node.js) stack, the platform showcases modern React development practices with real-world features like:
 
-🔐 Authentication & Authorization
+- 🔐 Authentication & Authorization
 Secure login and registration with JWT and cookie-based authentication.
 
-📝 Blog CRUD Operations
+- 📝 Blog CRUD Operations
 Full support for creating, editing, viewing, and deleting blog posts with rich text and media.
 
-🎨 Responsive UI with Tailwind CSS
+- 🎨 Responsive UI with Tailwind CSS
 Modern design that works seamlessly on all devices.
 
-📡 API Integration with Axios
+- 📡 API Integration with Axios
 Clean separation of concerns between front-end and back-end services using RESTful APIs.
 
-🖼️ Image Uploads with Cloudinary
+- 🖼️ Image Uploads with Cloudinary
 Upload and manage media assets easily and efficiently.
 
-🧠 React Hook Form
+- 🧠 React Hook Form
 Robust form state management with real-time validation.
 
-🧾 Rich Text Editing (TinyMCE)
+- 🧾 Rich Text Editing (TinyMCE)
 WYSIWYG editing experience for writing detailed and formatted blog posts.
 
-🔁 Client-Side Routing
+- 🔁 Client-Side Routing
 Smooth navigation powered by React Router DOM.
 
-🔔 User Feedback with React Hot Toast
+- 🔔 User Feedback with React Hot Toast
 Lightweight toast notifications for a polished UX.
 
-💬 Custom Confirm Modal
+- 💬 Custom Confirm Modal
 Extra layer of confirmation before critical actions like delete.
 
-🕸️ Skeleton Loaders
+- 🕸️ Skeleton Loaders
 Better perceived performance with content placeholders during async operations.
 
 
@@ -42,20 +44,20 @@ Login Page:
 
 ![Screenshot 2025-06-07 141331](https://github.com/user-attachments/assets/bb7a8ca5-4776-4e17-a3a4-682e511bd682)
 
-Home Page:
+#### Home Page:
 
 ![Screenshot 2025-06-07 141350](https://github.com/user-attachments/assets/8d88fa52-a6fa-4eb7-9519-987333ef0038)
 
-Blog Post:
+#### Blog Post:
 
 ![Screenshot 2025-06-07 141611](https://github.com/user-attachments/assets/ecb92f21-e2c5-4c16-b9c2-15783169f6d5)
 ![Screenshot 2025-06-07 141554](https://github.com/user-attachments/assets/15c1fcb8-5f79-4f61-b46c-f6667b4bd08c)
 
-Adding a Blog Post: TinyMCE's Real Time Editor
+#### Adding a Blog Post: TinyMCE's Real Time Editor
 
 ![Screenshot 2025-06-07 141401](https://github.com/user-attachments/assets/b6ea66c8-77b3-4f74-b549-dfe4f2bdb0a0)
 
-Profile: (All the blogs posted by an user)
+#### Profile: (All the blogs posted by an user)
 
 ![Screenshot 2025-06-07 141409](https://github.com/user-attachments/assets/da24bdba-1d96-4087-8445-9b6c736cb31f)
 
@@ -70,39 +72,39 @@ Updating account details, avatar and updating password:
 
 
 
-🧰 Tech Stack:
+### 🧰 Tech Stack:
 
 📦 Frontend
-React.js
+- React.js
 
-Redux Toolkit
+- Redux Toolkit
 
-Tailwind CSS
+- Tailwind CSS
 
-React Router DOM
+- React Router DOM
 
-Axios
+- Axios
 
-React Hook Form
+- React Hook Form
 
-TinyMCE Editor
+- TinyMCE Editor
 
-React Hot Toast
+- React Hot Toast
 
 🔧 Backend
-Node.js
+- Node.js
 
-Express.js
+- Express.js
 
-MongoDB (Mongoose ODM)
+- MongoDB (Mongoose ODM)
 
-JWT Authentication
+- JWT Authentication
 
-Cloudinary (for image hosting)
+- Cloudinary (for image hosting)
 
 
 
-📁 FOLDER STRUCTURE:
+### 📁 FOLDER STRUCTURE:
 
 <pre> 
   blogger/ 
