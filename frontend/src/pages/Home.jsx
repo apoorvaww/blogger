@@ -16,7 +16,7 @@ const Home = () => {
     const getPosts = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/blogs/get-public-blogs`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/blogs/get-public-blogs`,
           {
             withCredentials: true,
           }

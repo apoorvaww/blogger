@@ -16,7 +16,7 @@ const CommentItem = ({ comment, blogId, fetchComments, depth = 0 }) => {
   const getReplies = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/comments/get-replies-on-comment/${
+        `${import.meta.env.VITE_BACKEND_URL}/api/comments/get-replies-on-comment/${
           comment._id
         }`
       );
@@ -38,7 +38,7 @@ const CommentItem = ({ comment, blogId, fetchComments, depth = 0 }) => {
     if (!replyText.trim()) return toast.error("Reply cannot be empty!");
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/comments/add-reply-to-comment/${
+        `${import.meta.env.VITE_BACKEND_URL}/api/comments/add-reply-to-comment/${
           comment._id
         }`,
         { replyContent: replyText },
@@ -58,7 +58,7 @@ const CommentItem = ({ comment, blogId, fetchComments, depth = 0 }) => {
     if (!editText.trim()) return toast.error("Comment cannot be empty!");
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/comments/update-comment/${
+        `${import.meta.env.VITE_BACKEND_URL}/api/comments/update-comment/${
           comment._id
         }`,
         { updatedContent: editText },
@@ -76,7 +76,7 @@ const CommentItem = ({ comment, blogId, fetchComments, depth = 0 }) => {
   const handleDelete = async () => {
     try {
       await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/comments/delete-comment/${
+        `${import.meta.env.VITE_BACKEND_URL}/api/comments/delete-comment/${
           comment._id
         }`,
         {},

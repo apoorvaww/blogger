@@ -65,7 +65,7 @@ const EditPost = () => {
     const getPost = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/blogs/get-single-blog/${blogId}`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/blogs/get-single-blog/${blogId}`,
           {
             withCredentials: true,
           }

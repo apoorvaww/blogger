@@ -24,7 +24,7 @@ const SigninComponent = () => {
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/users/login`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
         {
           email,
           password,

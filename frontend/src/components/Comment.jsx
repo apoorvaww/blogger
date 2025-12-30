@@ -14,7 +14,7 @@ const Comment = ({ blogId }) => {
     try {
       setLoading(true);
       const res = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/comments/get-comments-on-blog/${blogId.id}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/comments/get-comments-on-blog/${blogId.id}`
       );
       console.log("comments:", res.data.data);
       const fetchedComments = res.data?.data?.comments || [];
@@ -35,7 +35,7 @@ const Comment = ({ blogId }) => {
     if (!commentText.trim()) return toast.error("Comment cannot be empty!");
     try {
       await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/comments/create-comment/${blogId.id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/comments/create-comment/${blogId.id}`,
         { content: commentText },
         { withCredentials: true }
       );

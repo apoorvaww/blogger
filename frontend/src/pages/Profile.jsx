@@ -14,7 +14,7 @@ const Profile = () => {
     const getAllBlogs = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/blogs/get-all-blogs/${userId}`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/blogs/get-all-blogs/${userId}`,
           { withCredentials: true }
         );
         setBlogs(res.data.data || []);

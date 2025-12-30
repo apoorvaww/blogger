@@ -18,7 +18,7 @@ function App() {
     const checkUserSession = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/users/get-current-user`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/users/get-current-user`,
           {
             withCredentials: true,
           }

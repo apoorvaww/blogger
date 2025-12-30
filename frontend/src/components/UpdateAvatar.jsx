@@ -43,7 +43,7 @@ const UpdateAvatar = () => {
 
     try {
       const res = await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/users/update-user-avatar`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/update-user-avatar`,
         formData,
         {
           headers: {

@@ -32,12 +32,12 @@ const SignupComponent = () => {
     if (data.avatar && data.avatar.length > 0) {
       formData.append("avatar", data.avatar[0]);
     }
-    // const reqUrl = `${import.meta.env.VITE_BACKEND_URL}`
-    // console.log(reqUrl)
+    const reqUrl = `${import.meta.env.VITE_BACKEND_URL}`
+    console.log(reqUrl)
 
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/users/register`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/register`,
         formData,
         {
           withCredentials: true,
@@ -53,29 +53,33 @@ const SignupComponent = () => {
       toast.success("Account created successfully");
       navigate("/login");
     } catch (error) {
-      const { response } = error;
-      console.log(response);
-      let errorMessage = "Sign up failed.";
-      if (response.data.message) {
-        errorMessage =
-          response.data.message || "Please fill up the sign up form correctly";
-      } else if (response?.data?.message) {
-        const message = response.data.message.toLowerCase();
-        if (message.includes("password")) {
-          setError("password", {
-            type: "server",
-            message: response.data.message,
-          });
-          toast.error("incorrect password");
-        } else if (message.includes("user") || message.includes("email")) {
-          setError("email", { type: "server", message: response.data.message });
-          toast.error("User not found with this email.");
-        } else {
-          toast.error(response.data.message);
-        }
-      }
-      toast.error(errorMessage)
-      console.error("Sign up error");
+      console.log(error);
+      const message = error?.response?.data?.message || error?.message || "Something went wrong"
+
+      toast.error(message)
+      // const { response } = error;
+      // console.log(response);
+      // let errorMessage = "Sign up failed.";
+      // if (response.data.message) {
+      //   errorMessage =
+      //     response.data.message || "Please fill up the sign up form correctly";
+      // } else if (response?.data?.message) {
+      //   const message = response.data.message.toLowerCase();
+      //   if (message.includes("password")) {
+      //     setError("password", {
+      //       type: "server",
+      //       message: response.data.message,
+      //     });
+      //     toast.error("incorrect password");
+      //   } else if (message.includes("user") || message.includes("email")) {
+      //     setError("email", { type: "server", message: response.data.message });
+      //     toast.error("User not found with this email.");
+      //   } else {
+      //     toast.error(response.data.message);
+      //   }
+      // }
+      // toast.error(errorMessage)
+      console.error(message);
     } finally {
       setLoading(false);
     }

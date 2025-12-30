@@ -21,7 +21,7 @@ const UpdateAccountDetails = ({}) => {
     setLoading(true);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/users/update-account-details`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/users/update-account-details`,
         {
           username: newUsername,
           fullName: newFullName,

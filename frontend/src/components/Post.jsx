@@ -17,7 +17,7 @@ const Post = () => {
     const fetchBlog = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/blogs/get-single-blog/${
+          `${import.meta.env.VITE_BACKEND_URL}/api/blogs/get-single-blog/${
             blogId.id
           }`,
           { withCredentials: true }
