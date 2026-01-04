@@ -23,11 +23,13 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 import blogRouter from "./routes/blog.routes.js";
 import commentRouter from "./routes/comment.routes.js"
+import aiRouter from './routes/ai.routes.js'
 
 //routes declaration:
 app.use("/api/users", userRouter);
 app.use("/api/blogs", blogRouter);
-app.use("/api/comments", commentRouter)
+app.use("/api/comments", commentRouter);
+app.use('/api/ai', aiRouter);
 
 app.use(errorHandler);
 

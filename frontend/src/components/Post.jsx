@@ -11,8 +11,11 @@ const Post = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   // console.log(blogId.id)
-  const[deleteModal, setDeleteModal] =useState(false);
-  
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [summary, setSummary] = useState("");
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryError, setSummaryError] = useState("");
+
   useEffect(() => {
     const fetchBlog = async () => {
       try {
@@ -34,7 +37,7 @@ const Post = () => {
   }, [blogId]);
 
   const loggedInUser = useSelector((state) => state.auth);
-  console.log(loggedInUser.userData)
+  console.log(loggedInUser.userData);
 
   if (loading || !blog) {
     return (
@@ -58,20 +61,46 @@ const Post = () => {
   const isAuthor = loggedInUser.userData._id === owner._id ? true : false;
   // console.log(isAuthor)
 
-  const handleDelete = async() =>  {
+  const handleDelete = async () => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/blogs/delete-blog-post/${blogId.id}`,
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/blogs/delete-blog-post/${
+          blogId.id
+        }`,
         {},
         {
-          withCredentials: true
+          withCredentials: true,
         }
       );
-      console.log("deleting post response: ", res.data)
-      navigate('/');
+      console.log("deleting post response: ", res.data);
+      navigate("/");
     } catch (error) {
-      console.error("error in deleting post", error)
+      console.error("error in deleting post", error);
     }
-  }
+  };
+
+  const summarizeBlog = async () => {
+    try {
+      setSummaryLoading(true);
+      setSummaryError("");
+      setSummary("");
+
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/ai/summarize-blog`,
+        {
+          content: content,
+        },
+        { withCredentials: true }
+      );
+      console.log("response from summarize: ", res.data.data.result);
+      setSummary(res.data.data.result)
+    } catch (error) {
+      setSummaryError("Failed to generate summary. Please try again later.");
+      console.log("error: ", error);
+    } finally {
+      setSummaryLoading(false);
+    }
+  };
 
   return (
     <>
@@ -97,7 +126,6 @@ const Post = () => {
               src={loggedInUser.userData.avatar}
               alt="User Avatar"
               className="w-9 h-9 rounded-full object-cover border"
-              
             />
           </div>
         </div>
@@ -190,7 +218,54 @@ const Post = () => {
           dangerouslySetInnerHTML={{ __html: content }}
         />
 
-        
+        <section className="mt-14 p-6 rounded-2xl border border-blue-200 bg-blue-50 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+              🤖 AI Summary
+            </h2>
+
+            <button
+              onClick={() => summarizeBlog()}
+              disabled={summaryLoading}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                summaryLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
+              }`}
+            >
+              {summaryLoading ? "Summarizing..." : "Summarize Blog"}
+            </button>
+          </div>
+
+          {/* Loading State */}
+          {summaryLoading && (
+            <div className="animate-pulse space-y-3">
+              <div className="h-4 bg-blue-200 rounded w-full" />
+              <div className="h-4 bg-blue-200 rounded w-5/6" />
+              <div className="h-4 bg-blue-200 rounded w-2/3" />
+            </div>
+          )}
+
+          {/* Error */}
+          {summaryError && (
+            <p className="text-red-600 text-sm mt-2">{summaryError}</p>
+          )}
+
+          {/* Summary Output */}
+          {summary && (
+            <div className="mt-4 text-gray-800 leading-relaxed">
+              <p className="whitespace-pre-line">{summary}</p>
+            </div>
+          )}
+
+          {!summary && !summaryLoading && (
+            <p className="text-sm text-gray-600">
+              Click <strong>Summarize Blog</strong> to get a concise
+              AI-generated summary of this article.
+            </p>
+          )}
+        </section>
+
         <div className="mt-16">
           <Comment blogId={blogId} commentCount={blog.commentsCount} />
         </div>
@@ -204,10 +279,10 @@ const Post = () => {
           </button>
         </div>
         <ConfirmModal
-        isOpen={deleteModal}
-        onClose={()=>setDeleteModal(false)}
-        onConfirm={handleDelete}
-        message="Are you sure you want to delete this post?"
+          isOpen={deleteModal}
+          onClose={() => setDeleteModal(false)}
+          onConfirm={handleDelete}
+          message="Are you sure you want to delete this post?"
         />
       </div>
     </>

@@ -42,7 +42,7 @@ const AddPost = ({ post }) => {
       }
 
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/blogs/create-blog-post`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/blogs/create-blog-post`,
         formdata,
         {
           withCredentials: true,

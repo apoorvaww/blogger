@@ -9,7 +9,7 @@ const LogoutBtn = () => {
   const navigate = useNavigate();
   const logoutHandler = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/logout`,
+      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users/logout`,
       {},
     {
       withCredentials: true
