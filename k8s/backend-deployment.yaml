@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blogger-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: blogger-backend
+  template:
+    metadata:
+      labels:
+        app: blogger-backend
+    spec:
+      containers:
+        - name: backend
+          image: your-dockerhub-username/blogger-backend:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: blogger-secrets
+                  key: MONGO_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: blogger-secrets
+                  key: JWT_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: blogger-backend
+  ports:
+    - port: 5000
+      targetPort: 5000
